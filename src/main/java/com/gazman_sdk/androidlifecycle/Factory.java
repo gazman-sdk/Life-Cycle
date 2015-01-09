@@ -4,19 +4,24 @@
 //
 //	This is not free software. You can redistribute and/or modify it
 //	in accordance with the terms of the accompanying license agreement.
-//  https://github.com/Ilya-Gazman/gazman-sdk/blob/master/LICENSE.md
+//  https://github.com/Ilya-Gazman/android_life_cycle/blob/master/LICENSE.md
 // =================================================================================================
 package com.gazman_sdk.androidlifecycle;
 
 import java.util.HashMap;
 
+/**
+ * Inline tool for injecting classes.<br>
+ * If your class implements SingleTon, the same instance will be returned for all calls with the same family,
+ * if family wasn't specified, default value will apply<br>
+ * If your class implements Injector, Injector.injectionHandler() will be called right after the class contractor, providing you with information about which family been used to inject this class.
+ */
 public class Factory {
 
 	/**
 	 * Retrieve instance of claz class
 	 * 
-	 * @param claz
-	 *            the class to retrieve
+	 * @param claz the class to retrieve
 	 * @return instance of claz class
 	 */
 	public static <T> T inject(Class<T> claz) {
@@ -24,18 +29,17 @@ public class Factory {
 	}
 
 	/**
-	 * Retrieve instance of claz class using MultiTon pattern with family as a
+	 * Retrieve instance of classType class using MultiTon pattern with family as a
 	 * key
 	 * 
-	 * @param claz
-	 *            the class to retrieve
-	 * @return instance of claz class
+	 * @param classType the class to retrieve
+	 * @return instance of classType class
 	 * @see <a href="http://en.wikipedia.org/wiki/Multiton_pattern">Multiton
 	 *      pattern on wiki</a>
 	 */
-	public static <T> T inject(Class<T> claz, String family) {
-		HashMap<String, Class<?>> hashMap = Registrar.classesMap.get(claz);
-		Class<?> classToUse = hashMap != null ? hashMap.get(family) : claz;
+	public static <T> T inject(Class<T> classType, String family) {
+		HashMap<String, Class<?>> hashMap = Registrar.classesMap.get(classType);
+		Class<?> classToUse = hashMap != null ? hashMap.get(family) : classType;
 		T instance;
 		if (SingleTon.class.isAssignableFrom(classToUse)) {
 			instance = ClassConstructor.constructSingleTon(family, classToUse);
@@ -51,33 +55,23 @@ public class Factory {
 	}
 
 	/**
-	 * Retrieve instance of claz class <br><br>
-	 * *If you have more than one constructor it may result in slow
-	 * performance as it will handle inside exceptions<br>
-	 * *In case your constructor is a string call {@link #injectWithParams(Class, String, Object...) injectWithParams(claz, null, [String])}
+	 * Retrieve instance of classType class <br><br>
+	 * - In case your constructor has one string parameter call injectWithParams(classType, null, your string parameter)}
 	 * 
-	 * @param claz
-	 *            the class to retrieve
-	 * @param params
-	 *            contractor parameters
-	 * @return instance of claz class
+	 * @param classType the class to retrieve
+	 * @param params contractor parameters
+	 * @return instance of classType class
 	 */
-	public static <T> T injectWithParams(Class<T> claz, Object... params) {
-		return injectWithParamsAndFamily(claz, Registrar.DEFAULT_FAMILY, params);
+	public static <T> T injectWithParams(Class<T> classType, Object... params) {
+		return injectWithParamsAndFamily(classType, Registrar.DEFAULT_FAMILY, params);
 	}
 
 	/**
 	 * Retrieve instance of claz class <br><br>
 	 * 
-	 * *If you have more than one constructor it may result in slow
-	 * performance as it will handle inside exceptions
-	 * 
-	 * @param claz
-	 *            the class to inject
-	 * @param family
-	 *            class family for Multiton pattern
-	 * @param params
-	 *            the constructor parameters
+	 * @param claz the class to inject
+	 * @param family class family for Multiton pattern
+	 * @param params the constructor parameters
 	 * @return instance of claz class
 	 * @see <a href="http://en.wikipedia.org/wiki/Multiton_pattern">Multiton
 	 *      pattern on wiki</a>
@@ -104,5 +98,4 @@ public class Factory {
 		
 		return instance;
 	}
-
 }
