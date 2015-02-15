@@ -6,7 +6,29 @@ Take a look for basic usage below:
 
 Factory
 -------
-Allows you to inject classes by calling **Factory.inject**, if the injected class implements Singleton interface, it insures that only one instance of this class will be created during application life cycle.
+How would you usualy create a Singleton in Android?
+
+```Java
+class MyModel{
+    private static volatile MyModel instance;
+    
+    public static synchronized MyModel getInstance(){
+        if(instance == null){
+            instance = new MyModel(); 
+        }
+        return instance;
+    }
+}
+
+class A{
+    MyModel myModel = MyModel.getInstance();
+}
+class B{
+    MyModel myModel = MyModel.getInstance();
+}
+```
+
+How to do it in Android Life Cycle?
 
 ```Java
 class MyModel implements Singleton{
@@ -28,11 +50,82 @@ Both classes **A** and **B** have the same reference to **MyModel** class.
 Signals
 -------
 
-Just like events, this is a method for sharing information between classes
+How to create a custom event in Android?
 
 ```Java
+interface ISayHi
+{
+    void handleSayHi()
+}
+
+class SayHiEvent(){
+    
+    private static volatile SayHiEvent instance;
+    ArrayList<ISayHi> listeners = new ArrayList<ISayHi>();
+    
+    public static synchronized SayHiEvent getInstance(){
+        if(instance == null){
+            instance = new SayHiEvent(); 
+        }
+        return instance;
+    }
+
+    public void addListener(ISayHi listener){
+        listeners.add(listener);
+    }
+    
+    public void removeListener(ISayHi listener){
+        listeners.add(listener);
+    }
+    
+    public void dispatch(){
+        for(ISayHi listener : listeners){
+            listener.handleSayHi();
+        }
+    }
+
+}
+
 class A{
 
+    SayHiSignal signal = SayHiEvent.getInstance();
+
+    void run(){
+        signal.dispatch();
+    }
+    
+}
+
+class B implements ISayHiSignal{
+    SayHiSignal signal = SayHiEvent.getInstance();
+ 
+    void init(){
+        signal.addListener(this);
+    }
+ 
+    void handleSayHi(){
+        System.out.println("Hello world!");
+    }
+ 
+}
+```
+
+How to do it in Android Life Cycle?
+
+
+```Java
+class SayHiSignal extends Signal<ISayHiSignal> implements ISayHiSignal
+{
+    void handleSayHi(){
+        dispatch();
+    }
+}
+interface ISayHiSignal
+{
+    void handleSayHi()
+}
+
+class A{
     SayHiSignal signal = Factory.inject(SayHiSignal.class);
 
     void run(){
@@ -49,31 +142,11 @@ class B implements ISayHiSignal{
     }
  
     void handleSayHi(){
-        System.out.println("Hello world");
+        System.out.println("Hello world!");
     }
  
 }
 ```
-When **run** method of class **A** is called, **SayHiSignal** will be dispatched, and **handleSayHi** method of class **B** will be called. Of course **B** need to register for that signal, as it is doing in the **init** method, or nothing will happen.<br> 
-Here is what you have to do, to create a signal
-
-
-
-```Java
-class SayHiSignal extends Signal<ISayHiSignal> implements ISayHiSignal
-{
-
-    void handleSayHi(){
-        dispatch();
-    }
- 
-}
-interface ISayHiSignal
-{
-    void handleSayHi()
-}
-```
-
 
  - There could be multiple listeners for each signal
  - It is possible to register and unregister from signal.
@@ -82,7 +155,7 @@ interface ISayHiSignal
  
 Advanced usage
 --------------
-The documentation is not complete just yet, here are the additional usages that will be documented soon.
+The documentation is not complete just yet(But the source is!), here are the additional usages that will be documented soon.
 
  - Using **Factory** as [factory patern](http://en.wikipedia.org/wiki/Factory_method_pattern)
  - Using **Factory** with family property, to implement [multiton patern](http://en.wikipedia.org/wiki/Multiton_pattern).
