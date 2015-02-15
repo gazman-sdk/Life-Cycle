@@ -50,7 +50,7 @@ Both classes **A** and **B** have the same reference to **MyModel** class.
 Signals
 -------
 A method of sharing information between classes.<br>
-How to create a custom event in Android?
+How would you usualy create a custom event in Android?
 
 ```Java
 interface ISayHi
@@ -75,7 +75,7 @@ class SayHiEvent(){
     }
     
     public void removeListener(ISayHi listener){
-        listeners.add(listener);
+        listeners.remove(listener);
     }
     
     public void dispatch(){
@@ -87,20 +87,19 @@ class SayHiEvent(){
 }
 
 class A{
-
-    SayHiSignal signal = SayHiEvent.getInstance();
+    SayHiEvent event = SayHiEvent.getInstance();
 
     void run(){
-        signal.dispatch();
+        event.dispatch();
     }
     
 }
 
 class B implements ISayHiSignal{
-    SayHiSignal signal = SayHiEvent.getInstance();
+    SayHiEvent event = SayHiEvent.getInstance();
  
     void init(){
-        signal.addListener(this);
+        event.addListener(this);
     }
  
     void handleSayHi(){
@@ -114,15 +113,16 @@ class B implements ISayHiSignal{
 
 
 ```Java
+interface ISayHiSignal
+{
+    void handleSayHi()
+}
+
 class SayHiSignal extends Signal<ISayHiSignal> implements ISayHiSignal
 {
     void handleSayHi(){
         dispatch();
     }
-}
-interface ISayHiSignal
-{
-    void handleSayHi()
 }
 
 class A{
@@ -160,10 +160,3 @@ The documentation is not complete just yet(But the source is!), here are the add
  - Using **Factory** as [factory patern](http://en.wikipedia.org/wiki/Factory_method_pattern)
  - Using **Factory** with family property, to implement [multiton patern](http://en.wikipedia.org/wiki/Multiton_pattern).
  - Using **Registrar** to create all the application dependencies, such as signal registration and factory pattern, during bootstrap time. 
-
-
-
-
-
-
-
