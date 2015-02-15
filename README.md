@@ -28,7 +28,7 @@ class B{
 }
 ```
 
-How to do it in Android Life Cycle?
+**How to do it with Android Life Cycle?**
 
 ```Java
 class MyModel implements Singleton{
@@ -49,7 +49,7 @@ Both classes **A** and **B** have the same reference to **MyModel** class.
 
 Signals
 -------
-
+A method of sharing information between classes.<br>
 How to create a custom event in Android?
 
 ```Java
@@ -110,7 +110,7 @@ class B implements ISayHiSignal{
 }
 ```
 
-How to do it in Android Life Cycle?
+**How to do it with Android Life Cycle?**
 
 
 ```Java
