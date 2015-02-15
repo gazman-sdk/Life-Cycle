@@ -95,7 +95,7 @@ class A{
     
 }
 
-class B implements ISayHiSignal{
+class B implements ISayHi{
     SayHiEvent event = SayHiEvent.getInstance();
  
     void init(){
