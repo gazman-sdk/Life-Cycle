@@ -16,26 +16,26 @@ public class RegisterBundle<T> {
 
     protected RegisterBundle(){}
 
-    public static <T> RegisterBundle<T> build(Class<T> type){
-        return new RegisterBundle<>();
+    public static <T> RegisterBundle<T> build(T handler){
+        return new RegisterBundle<T>().setHandler(handler);
     }
 
-    public RegisterBundle setHandler(T handler) {
+    protected RegisterBundle<T> setHandler(T handler) {
         this.handler = handler;
         return this;
     }
 
-    public RegisterBundle setSignalClass(Class<? extends ISignal<T>> signalClass) {
+    public RegisterBundle<T> setSignalClass(Class<? extends ISignal<T>> signalClass) {
         this.signalClass = signalClass;
         return this;
     }
 
-    public RegisterBundle setSignalInstance(ISignal<T> signalInstance) {
+    public RegisterBundle<T> setSignalInstance(ISignal<T> signalInstance) {
         this.signalInstance = signalInstance;
         return this;
     }
 
-    public RegisterBundle setFamily(String family) {
+    public RegisterBundle<T> setFamily(String family) {
         this.family = family;
         return this;
     }

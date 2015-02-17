@@ -26,8 +26,10 @@ public class RegistrarHelper {
     }
 
     public <T> void unregister(RegisterBundle<T> registerBundle){
-        registerBundle.unregister();
-        registerBundles.remove(registerBundle);
+        if(registerBundle != null){
+            registerBundle.unregister();
+            registerBundles.remove(registerBundle);
+        }
     }
 
     public void unregisterAll(){
