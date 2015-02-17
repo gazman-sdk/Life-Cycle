@@ -19,6 +19,7 @@ are permitted provided that the following conditions are met:
      at present time.
 
   4. You must pay coffee fee to Ilya Gazman.
+    4.1. You can pay through official website: http://gazman-sdk.com/buy_coffee.php 
 
 THIS SOFTWARE IS PROVIDED BY ILYA GAZMAN "AS IS" AND ANY EXPRESS OR IMPLIED 
 WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND 
