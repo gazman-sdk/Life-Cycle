@@ -119,7 +119,7 @@ interface SayHiSignal
 }
 
 class A{
-    Signal<SayHiSignal> signal = SignalsBag.inject(SayHi.class);
+    Signal<SayHiSignal> signal = SignalsBag.inject(SayHiSignal.class);
 
     void run(){
         signal.dispatcher.onSayHi();
