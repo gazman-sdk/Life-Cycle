@@ -127,7 +127,7 @@ class A{
     
 }
 
-class B implements SayHi{
+class B implements SayHiSignal{
     Signal<SayHiSignal> signal = SignalsBag.inject(SayHiSignal.class);
  
     void init(){
