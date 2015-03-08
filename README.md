@@ -58,7 +58,7 @@ interface SayHi
     void onSayHi()
 }
 
-class SayHiEvent(){
+class SayHiEvent{
     
     private static volatile SayHiEvent instance;
     ArrayList<SayHi> listeners = new ArrayList<SayHi>();
