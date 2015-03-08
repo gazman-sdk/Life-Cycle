@@ -1,4 +1,4 @@
-package com.gazman_sdk.androidlifecycle;
+package com.gazman.androidlifecycle;
 
 import android.app.Application;
 import android.test.ApplicationTestCase;

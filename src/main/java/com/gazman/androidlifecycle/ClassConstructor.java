@@ -6,9 +6,9 @@
 //	in accordance with the terms of the accompanying license agreement.
 //  https://github.com/Ilya-Gazman/android_life_cycle/blob/master/LICENSE.md
 // =================================================================================================
-package com.gazman_sdk.androidlifecycle;
+package com.gazman.androidlifecycle;
 
-import com.gazman_sdk.androidlifecycle.utils.UnhandledExceptionHandler;
+import com.gazman.androidlifecycle.utils.UnhandledExceptionHandler;
 
 import java.lang.reflect.Constructor;
 import java.util.HashMap;

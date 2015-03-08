@@ -1,9 +1,17 @@
-package com.gazman_sdk.androidlifecycle.signals;
+// =================================================================================================
+//	Life Cycle Framework for native android
+//	Copyright 2014 Ilya Gazman. All Rights Reserved.
+//
+//	This is not free software. You can redistribute and/or modify it
+//	in accordance with the terms of the accompanying license agreement.
+//  https://github.com/Ilya-Gazman/android_life_cycle/blob/master/LICENSE.md
+// =================================================================================================
+package com.gazman.androidlifecycle.signal;
 
 import android.util.Log;
 
-import com.gazman_sdk.androidlifecycle.Factory;
-import com.gazman_sdk.androidlifecycle.utils.UnhandledExceptionHandler;
+import com.gazman.androidlifecycle.Factory;
+import com.gazman.androidlifecycle.utils.UnhandledExceptionHandler;
 
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
@@ -17,7 +25,7 @@ public final class Signal<T> {
 
     public final T dispatcher;
     LinkedList<T> listeners = new LinkedList<>();
-    LinkedList<Class<T>> classListeners = new LinkedList<>();
+    LinkedList<Class<? extends T>> classListeners = new LinkedList<>();
     LinkedList<T> oneTimeListeners = new LinkedList<>();
     LinkedList<Class<T>> oneTimeClassListeners = new LinkedList<>();
 
@@ -29,7 +37,7 @@ public final class Signal<T> {
         listeners.add(listener);
     }
 
-    public void addListener(Class<T> listener) {
+    public void addListener(Class<? extends T> listener) {
         classListeners.add(listener);
     }
 
@@ -46,7 +54,7 @@ public final class Signal<T> {
         oneTimeListeners.remove(listener);
     }
 
-    public void removeListener(Class<T> listener) {
+    public void removeListener(Class<? extends T> listener) {
         classListeners.remove(listener);
         oneTimeClassListeners.remove(listener);
     }
@@ -60,7 +68,7 @@ public final class Signal<T> {
             for (Object listener : oneTimeListeners) {
                 invoke(method, args, listener);
             }
-            for (Class<T> classListener : classListeners) {
+            for (Class<? extends T> classListener : classListeners) {
                 T listener = Factory.inject(classListener);
                 invoke(method, args, listener);
             }

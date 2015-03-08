@@ -6,10 +6,9 @@
 //	in accordance with the terms of the accompanying license agreement.
 //  https://github.com/Ilya-Gazman/android_life_cycle/blob/master/LICENSE.md
 // =================================================================================================
-package com.gazman_sdk.androidlifecycle;
+package com.gazman.androidlifecycle;
 
-import com.gazman_sdk.androidlifecycle.signals.Signal;
-import com.gazman_sdk.androidlifecycle.signals.SignalsBag;
+import com.gazman.androidlifecycle.signal.SignalsHelper;
 
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -20,52 +19,7 @@ public abstract class Registrar {
     // GUIDE value
     public static final String DEFAULT_FAMILY = "de9502c7-a41a-4fdb-9d42-249b94fbeaa9";
 
-    private static LinkedList<Registrar> registrars = new LinkedList<Registrar>();
-    private static boolean initializationComplete = false;
-    private static Object synObject = new Object();
-
-    /**
-     * Register for initializationCompleteSignal. If the initialization already complete the signal will be callback will be instantly executed.
-     * <br>This process is thread safety.
-     *
-     * @param callback InitializationCompleteSignal callback
-     */
-    public static <T extends RegistrationCompleteSignal> void registerForInitializationComplete(
-            T callback) {
-        synchronized (synObject) {
-            if (initializationComplete) {
-                callback.registrationCompleteHandler();
-            } else {
-                Signal<RegistrationCompleteSignal> signal = SignalsBag.inject(RegistrationCompleteSignal.class);
-                signal.addListenerOnce(callback);
-            }
-        }
-    }
-
-    /**
-     * The entry point to the initialization process
-     */
-    void initialize() {
-        synchronized (synObject) {
-            if (initializationComplete) {
-                throw new IllegalStateException(
-                        "Initialization process has already been executed.");
-            }
-            initializationComplete = true;
-            initRegistrars();
-            for (Registrar registrar : registrars) {
-                registrar.initClasses();
-            }
-            initClasses();
-            for (Registrar registrar : registrars) {
-                registrar.initSignals();
-            }
-            initSignals();
-            registrars = null;
-        }
-        Signal<RegistrationCompleteSignal> signal = SignalsBag.inject(RegistrationCompleteSignal.class);
-        signal.dispatcher.registrationCompleteHandler();
-    }
+    static LinkedList<Registrar> registrars = new LinkedList<Registrar>();
 
     /**
      * Will call {@link #registerClass(Class, Class, String)} with <br>
@@ -99,7 +53,7 @@ public abstract class Registrar {
     }
 
     /**
-     * When any class from @claz super family up to @topClaz will be injected @claz
+     * When any class  @claz super family up to @topClaz will be injected @claz
      * will be created.
      *
      * @param claz    claz the class tree to register
@@ -136,7 +90,7 @@ public abstract class Registrar {
      */
     protected abstract void initClasses();
 
-    protected abstract void initSignals();
+    protected abstract void initSignals(SignalsHelper signalsHelper);
 
     /**
      * A place to make all your {@link #addRegistrar(Registrar)} calls. <br>

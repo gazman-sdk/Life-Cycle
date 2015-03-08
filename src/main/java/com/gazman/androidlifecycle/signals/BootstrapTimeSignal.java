@@ -6,29 +6,12 @@
 //	in accordance with the terms of the accompanying license agreement.
 //  https://github.com/Ilya-Gazman/android_life_cycle/blob/master/LICENSE.md
 // =================================================================================================
-package com.gazman_sdk.androidlifecycle;
-
-import android.app.Application;
-import android.content.Context;
+package com.gazman.androidlifecycle.signals;
 
 /**
- * Created by user on 04-Dec-14.
+ * Created by Gazman on 3/2/2015.
  */
-public abstract class LifeCycleApplication extends Application{
-    private static Context instance;
+public interface BootstrapTimeSignal {
 
-    @Override
-    public void onCreate() {
-        instance = this;
-        super.onCreate();
-        new Bootstrap(getRegistrar()).start();
-    }
-
-    protected abstract Registrar getRegistrar();
-
-    public static Context getApplicationContext$() {
-        return instance;
-    }
-
-
+    void onBootstrap();
 }

@@ -6,12 +6,11 @@
 //	in accordance with the terms of the accompanying license agreement.
 //  https://github.com/Ilya-Gazman/android_life_cycle/blob/master/LICENSE.md
 // =================================================================================================
-package com.gazman_sdk.androidlifecycle;
+package com.gazman.androidlifecycle.task.signals;
 
-public interface Injector {
-	/**
-	 * Will be called right after the constructor
-	 * @param family The family this instance been injected in to
-	 */
-	void injectionHandler(String family);
+/**
+ * Created by Gazman on 3/4/2015.
+ */
+public interface TasksCompleteSignal {
+    void onTasksComplete();
 }

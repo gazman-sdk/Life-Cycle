@@ -6,11 +6,11 @@
 //	in accordance with the terms of the accompanying license agreement.
 //  https://github.com/Ilya-Gazman/android_life_cycle/blob/master/LICENSE.md
 // =================================================================================================
-package com.gazman_sdk.androidlifecycle.utils;
+package com.gazman.androidlifecycle.task.signals;
 
 /**
- * Created by Ilya Gazman on 04-Dec-14.
+ * Created by Gazman on 3/7/2015.
  */
-public interface Command {
-    void execute();
+public interface TimeOutSignal {
+    void onTimeOut();
 }

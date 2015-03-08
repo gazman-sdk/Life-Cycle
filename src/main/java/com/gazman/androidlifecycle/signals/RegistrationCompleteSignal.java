@@ -6,6 +6,11 @@
 //	in accordance with the terms of the accompanying license agreement.
 //  https://github.com/Ilya-Gazman/android_life_cycle/blob/master/LICENSE.md
 // =================================================================================================
-package com.gazman_sdk.androidlifecycle;
+package com.gazman.androidlifecycle.signals;
 
-public interface SingleTon {}
+/**
+ * Created by Gazman on 2/24/2015.
+ */
+public interface RegistrationCompleteSignal {
+    void registrationCompleteHandler();
+}

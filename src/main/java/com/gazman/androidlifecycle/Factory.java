@@ -6,7 +6,7 @@
 //	in accordance with the terms of the accompanying license agreement.
 //  https://github.com/Ilya-Gazman/android_life_cycle/blob/master/LICENSE.md
 // =================================================================================================
-package com.gazman_sdk.androidlifecycle;
+package com.gazman.androidlifecycle;
 
 import java.util.HashMap;
 
