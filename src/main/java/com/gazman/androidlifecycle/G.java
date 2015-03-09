@@ -16,14 +16,13 @@ import android.content.ContextWrapper;
  */
 public class G extends ContextWrapper {
 
-    private static final G g = new G();
-    public static final Context context = g;
+    public static final Context app = new G();
 
     private G() {
         super(null);
     }
 
-    static void setContext(Context context) {
-        g.attachBaseContext(context);
+    static void setApp(Context context) {
+        ((G)app).attachBaseContext(context.getApplicationContext());
     }
 }

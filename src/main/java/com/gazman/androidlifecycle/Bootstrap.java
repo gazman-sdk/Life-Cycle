@@ -30,7 +30,7 @@ public abstract class Bootstrap extends Registrar {
     private BootstrapTimeSignal bootstrapTimeSignal = SignalsBag.inject(BootstrapTimeSignal.class).dispatcher;
 
     public Bootstrap(Context context) {
-        G.setContext(context);
+        G.setApp(context);
     }
 
     /**
