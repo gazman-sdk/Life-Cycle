@@ -49,19 +49,19 @@ Both classes **A** and **B** have the same reference to **MyModel** class.
 
 Signals
 -------
-A method of sharing information between classes.<br>
+A method of sharing information between classes, aka events.<br>
 How would you usualy create a custom event in Android?
 
 ```Java
-interface ISayHi
+interface SayHi
 {
-    void handleSayHi()
+    void onSayHi()
 }
 
-class SayHiEvent(){
+class SayHiEvent{
     
     private static volatile SayHiEvent instance;
-    ArrayList<ISayHi> listeners = new ArrayList<ISayHi>();
+    ArrayList<SayHi> listeners = new ArrayList<SayHi>();
     
     public static synchronized SayHiEvent getInstance(){
         if(instance == null){
@@ -70,16 +70,16 @@ class SayHiEvent(){
         return instance;
     }
 
-    public void addListener(ISayHi listener){
+    public void addListener(SayHi listener){
         listeners.add(listener);
     }
     
-    public void removeListener(ISayHi listener){
+    public void removeListener(SayHi listener){
         listeners.remove(listener);
     }
     
     public void dispatch(){
-        for(ISayHi listener : listeners){
+        for(SayHi listener : listeners){
             listener.handleSayHi();
         }
     }
@@ -95,14 +95,14 @@ class A{
     
 }
 
-class B implements ISayHi{
+class B implements SayHi{
     SayHiEvent event = SayHiEvent.getInstance();
  
     void init(){
         event.addListener(this);
     }
  
-    void handleSayHi(){
+    void onSayHi(){
         System.out.println("Hello world!");
     }
  
@@ -113,35 +113,28 @@ class B implements ISayHi{
 
 
 ```Java
-interface ISayHiSignal
+interface SayHiSignal
 {
-    void handleSayHi()
-}
-
-class SayHiSignal extends Signal<ISayHiSignal> implements ISayHiSignal
-{
-    void handleSayHi(){
-        dispatch();
-    }
+    void onSayHi()
 }
 
 class A{
-    SayHiSignal signal = Factory.inject(SayHiSignal.class);
+    Signal<SayHiSignal> signal = SignalsBag.inject(SayHiSignal.class);
 
     void run(){
-        signal.handleSayHi();
+        signal.dispatcher.onSayHi();
     }
     
 }
 
-class B implements ISayHiSignal{
-    SayHiSignal signal = Factory.inject(SayHiSignal.class);
+class B implements SayHiSignal{
+    Signal<SayHiSignal> signal = SignalsBag.inject(SayHiSignal.class);
  
     void init(){
         signal.addListener(this);
     }
  
-    void handleSayHi(){
+    void onSayHi(){ 
         System.out.println("Hello world!");
     }
  
@@ -150,10 +143,10 @@ class B implements ISayHiSignal{
 
  - There could be multiple listeners for each signal
  - It is possible to register and unregister from signal.
- - The interface method may have parameters, just make sure to pass them for the dispatch method.
- - Signals are **Singleton**s, to use them locally create them without Factory. For example as a member of singleton model
+ - Also signal got the method **addListenerOnce()**, it will automaticaly unregister the listener after the first dispatch of the signal
+ - SignalsBag got two methods: **inject** and **create**, inject is to use signal as singleton and create to create new instance of the signal.
  
-Advanced usage
+Continue reading more on [gazman-sdk.com](http://gazman-sdk.com)
 --------------
 The documentation is not complete just yet(But the source is!), here are the additional usages that will be documented soon.
 
