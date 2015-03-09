@@ -28,7 +28,7 @@ class B{
 }
 ```
 
-**How to do it with Android Life Cycle?**
+**How to do it with Life Cycle?**
 
 ```Java
 class MyModel implements Singleton{
@@ -109,7 +109,7 @@ class B implements SayHi{
 }
 ```
 
-**How to do it with Android Life Cycle?**
+**How to do it with Life Cycle?**
 
 
 ```Java
