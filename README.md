@@ -2,7 +2,7 @@ Android Life Cycle
 ==========
 A light library to speed up everything you are doing.
 
-Take a look for basic usage below:
+Take a look for basic usage below or watch the [slid show](https:/mdocs.google.com/presentation/d/181WIzXmmO7e16gPUp_sV2lsfFfhR2z8mh2VsDcotBNU/pub?start=true&loop=false&delayms=60000) for full docomintation:
 
 Factory
 -------
@@ -146,10 +146,4 @@ class B implements SayHiSignal{
  - Also signal got the method **addListenerOnce()**, it will automaticaly unregister the listener after the first dispatch of the signal
  - SignalsBag got two methods: **inject** and **create**, inject is to use signal as singleton and create to create new instance of the signal.
  
-Continue reading more on [gazman-sdk.com](http://gazman-sdk.com)
---------------
-The documentation is not complete just yet(But the source is!), here are the additional usages that will be documented soon.
-
- - Using **Factory** as [factory patern](http://en.wikipedia.org/wiki/Factory_method_pattern)
- - Using **Factory** with family property, to implement [multiton patern](http://en.wikipedia.org/wiki/Multiton_pattern).
- - Using **Registrar** to create all the application dependencies, such as signal registration and factory pattern, during bootstrap time. 
+See the full documintation in [slide Show]( https://docs.google.com/presentation/d/181WIzXmmO7e16gPUp_sV2lsfFfhR2z8mh2VsDcotBNU/pub?start=true&loop=false&delayms=60000)
