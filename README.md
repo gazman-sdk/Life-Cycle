@@ -2,7 +2,7 @@ Android Life Cycle
 ==========
 A light library to speed up everything you are doing.
 
-Take a look for basic usage below or watch the [slid show](https:/mdocs.google.com/presentation/d/181WIzXmmO7e16gPUp_sV2lsfFfhR2z8mh2VsDcotBNU/pub?start=true&loop=false&delayms=60000) for full docomintation:
+Take a look for basic usage below or watch the [slid show](https://docs.google.com/presentation/d/181WIzXmmO7e16gPUp_sV2lsfFfhR2z8mh2VsDcotBNU/pub?start=false&loop=false&delayms=3000) for full docomintation:
 
 Factory
 -------
@@ -146,4 +146,4 @@ class B implements SayHiSignal{
  - Also signal got the method **addListenerOnce()**, it will automaticaly unregister the listener after the first dispatch of the signal
  - SignalsBag got two methods: **inject** and **create**, inject is to use signal as singleton and create to create new instance of the signal.
  
-See the full documintation in [slide Show]( https://docs.google.com/presentation/d/181WIzXmmO7e16gPUp_sV2lsfFfhR2z8mh2VsDcotBNU/pub?start=true&loop=false&delayms=60000)
+See the full documintation in [slide Show](https://docs.google.com/presentation/d/181WIzXmmO7e16gPUp_sV2lsfFfhR2z8mh2VsDcotBNU/pub?start=false&loop=false&delayms=3000)
