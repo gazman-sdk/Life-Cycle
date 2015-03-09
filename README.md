@@ -1,4 +1,4 @@
-Android Life Cycle
+Life Cycle - for android
 ==========
 A light library to speed up everything you are doing.
 
