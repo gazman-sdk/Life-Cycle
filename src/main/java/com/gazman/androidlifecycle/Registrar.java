@@ -15,7 +15,8 @@ import java.util.LinkedList;
 
 
 public abstract class Registrar {
-    static HashMap<Class<?>, HashMap<String, Class<?>>> classesMap = new HashMap<Class<?>, HashMap<String, Class<?>>>();
+    static HashMap<Class<?>, HashMap<String, Class<?>>> classesMap = new HashMap<>();
+    static HashMap<Class<?>, Builder> buildersMap = new HashMap<>();
     // GUIDE value
     public static final String DEFAULT_FAMILY = "de9502c7-a41a-4fdb-9d42-249b94fbeaa9";
 
@@ -78,6 +79,16 @@ public abstract class Registrar {
             superclass = superclass.getSuperclass();
         }
 
+    }
+
+    /**
+     * When classToInject will be injected, it will be constructed using this builder
+     * @param classToInject
+     * @param builder
+     * @param <T>
+     */
+    protected <T> void addBuilder(Class<T> classToInject, Builder<T> builder) {
+        buildersMap.put(classToInject, builder);
     }
 
     protected void addRegistrar(Registrar registrar) {
