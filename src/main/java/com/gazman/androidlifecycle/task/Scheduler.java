@@ -34,22 +34,38 @@ public class Scheduler {
     private long waitForMilliseconds;
 
     /**
-     * Will wait for this signal to be dispatched
-     * @param signal
+     * Will wait for this signals to be dispatched
+     * @param signals
      * @return
      */
-    public Scheduler waitFor(Signal signal){
-        signals.add(signal);
+    public Scheduler waitFor(Signal...signals){
+        for (Signal signal : signals) {
+            this.signals.add(signal);
+        }
         return this;
     }
 
+    public <T> T create(Class<T> type){
+        Signal<T> signal = SignalsBag.create(type);
+        waitFor(signal);
+        return signal.dispatcher;
+    }
+
+    public <T> T inject(Class<T> type){
+        Signal<T> signal = SignalsBag.inject(type);
+        waitFor(signal);
+        return signal.dispatcher;
+    }
+
     /**
-     * Will inject this signal and wait for it to be dispatched
-     * @param signal
+     * Will inject those signals and wait for them to be dispatched
+     * @param signals
      * @return
      */
-    public Scheduler waitFor(Class signal){
-        signals.add(SignalsBag.inject(signal));
+    public Scheduler waitFor(Class...signals){
+        for (Class signal : signals) {
+            this.signals.add(SignalsBag.inject(signal));
+        }
         return this;
     }
 
@@ -111,12 +127,13 @@ public class Scheduler {
         for (Signal signal : signals) {
             Class<?>[] interfacesArray = signal.dispatcher.getClass().getInterfaces();
             for (Class<?> aClass : interfacesArray) {
-                interfaces.add(aClass);
+                if(!interfaces.contains(aClass)){
+                    interfaces.add(aClass);
+                }
             }
         }
-        Class<?>[] interfacesArray = new Class[interfaces.size()];
-        interfaces.toArray(interfacesArray);
-        return interfacesArray;
+
+        return interfaces.toArray(new Class[interfaces.size()]);
     }
 
     private void start(Class<?>[] interfaces) {
@@ -145,7 +162,7 @@ public class Scheduler {
 
         @Override
         public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
-            if(count.decrementAndGet() == 0){
+            if(count.decrementAndGet() <= 0){
                 synchronized (blocker){
                     blocker.notifyAll();
                 }

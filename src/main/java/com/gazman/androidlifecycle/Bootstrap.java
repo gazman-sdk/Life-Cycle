@@ -16,6 +16,9 @@ import com.gazman.androidlifecycle.signal.SignalsBag;
 import com.gazman.androidlifecycle.signal.SignalsHelper;
 import com.gazman.androidlifecycle.signals.BootstrapTimeSignal;
 import com.gazman.androidlifecycle.signals.RegistrationCompleteSignal;
+import com.gazman.androidlifecycle.task.Scheduler;
+
+import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * Created by Gazman on 2/17/2015.
@@ -28,6 +31,15 @@ public abstract class Bootstrap extends Registrar {
     private boolean initializationComplete;
     private RegistrationCompleteSignal registrationCompleteSignal = SignalsBag.inject(RegistrationCompleteSignal.class).dispatcher;
     private BootstrapTimeSignal bootstrapTimeSignal = SignalsBag.inject(BootstrapTimeSignal.class).dispatcher;
+
+    private static AtomicBoolean bootstrapCompleted = new AtomicBoolean(false);
+
+    /**
+     * Tells you if bootstrap completed or not
+     */
+    public static boolean isComplete(){
+        return bootstrapCompleted.get();
+    }
 
     public Bootstrap(Context context) {
         G.setApp(context);
@@ -64,14 +76,22 @@ public abstract class Bootstrap extends Registrar {
                 registrar.initSignals(signalsHelper);
             }
             initSignals(signalsHelper);
+
+            for (Registrar registrar : registrars) {
+                registrar.initSettings();
+            }
+            initSettings();
             registrars = null;
         }
 
-        bootstrapTimeSignal.onBootstrap();
+        Scheduler scheduler = Factory.inject(Scheduler.class);
+        bootstrapTimeSignal.onBootstrap(scheduler);
+        scheduler.block();
         handler.post(new Runnable() {
             @Override
             public void run() {
                 registrationCompleteSignal.registrationCompleteHandler();
+                bootstrapCompleted.set(true);
             }
         });
     }

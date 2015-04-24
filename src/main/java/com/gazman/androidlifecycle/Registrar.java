@@ -110,4 +110,11 @@ public abstract class Registrar {
      */
     protected abstract void initRegistrars();
 
+    /**
+     * As the last step in the registration
+     * You can optionally set general setting of your project here.
+     */
+    protected void initSettings() {
+
+    }
 }

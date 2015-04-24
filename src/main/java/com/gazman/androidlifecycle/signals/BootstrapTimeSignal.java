@@ -8,10 +8,12 @@
 // =================================================================================================
 package com.gazman.androidlifecycle.signals;
 
+import com.gazman.androidlifecycle.task.Scheduler;
+
 /**
  * Created by Gazman on 3/2/2015.
  */
 public interface BootstrapTimeSignal {
 
-    void onBootstrap();
+    void onBootstrap(Scheduler scheduler);
 }
