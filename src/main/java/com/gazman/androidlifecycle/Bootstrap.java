@@ -12,11 +12,14 @@ import android.content.Context;
 import android.os.Handler;
 import android.os.Looper;
 
+import com.gazman.androidlifecycle.signal.$SignalsTerminator;
+import com.gazman.androidlifecycle.signal.Disposable;
 import com.gazman.androidlifecycle.signal.SignalsBag;
 import com.gazman.androidlifecycle.signal.SignalsHelper;
 import com.gazman.androidlifecycle.signals.BootstrapTimeSignal;
 import com.gazman.androidlifecycle.signals.RegistrationCompleteSignal;
 import com.gazman.androidlifecycle.task.Scheduler;
+import com.gazman.androidlifecycle.task.signals.TasksCompleteSignal;
 
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -81,7 +84,7 @@ public abstract class Bootstrap extends Registrar {
                 registrar.initSettings();
             }
             initSettings();
-            registrars = null;
+            registrars.clear();
         }
 
         Scheduler scheduler = Factory.inject(Scheduler.class);
@@ -92,6 +95,19 @@ public abstract class Bootstrap extends Registrar {
             public void run() {
                 registrationCompleteSignal.registrationCompleteHandler();
                 bootstrapCompleted.set(true);
+            }
+        });
+    }
+
+    public static void exit(){
+        Scheduler scheduler = new Scheduler();
+        SignalsBag.inject(Disposable.class).dispatcher.onDispose(scheduler);
+        scheduler.start(new TasksCompleteSignal() {
+            @Override
+            public void onTasksComplete() {
+                Registrar.buildersMap.clear();
+                Registrar.classesMap.clear();
+                Registrar.registrars.clear();$SignalsTerminator.exit();
             }
         });
     }

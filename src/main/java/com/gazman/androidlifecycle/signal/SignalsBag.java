@@ -15,7 +15,7 @@ import java.util.HashMap;
  */
 public final class SignalsBag {
 
-    private static HashMap<Class<?>, Signal> map = new HashMap<>();
+    static HashMap<Class<?>, Signal> map = new HashMap<>();
 
     private SignalsBag() {}
 

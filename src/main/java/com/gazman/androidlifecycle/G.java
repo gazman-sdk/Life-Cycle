@@ -10,6 +10,8 @@ package com.gazman.androidlifecycle;
 
 import android.content.Context;
 import android.content.ContextWrapper;
+import android.os.Handler;
+import android.os.Looper;
 
 /**
  * A ContextWrapper for application context
@@ -17,12 +19,19 @@ import android.content.ContextWrapper;
 public class G extends ContextWrapper {
 
     public static final Context app = new G();
+    public static final Handler main = new Handler(Looper.getMainLooper());
 
     private G() {
         super(null);
     }
 
+
+    private static boolean initialized = false;
     static void setApp(Context context) {
+        if(initialized){
+            return;
+        }
+        initialized = true;
         ((G)app).attachBaseContext(context.getApplicationContext());
     }
 }

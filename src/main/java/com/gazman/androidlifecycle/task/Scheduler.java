@@ -91,7 +91,12 @@ public class Scheduler {
      * Will block this thread, right after the execution of the runnable, until  all signals is dispatched
      */
     public void blockAfter(Runnable runnable){
-        validate();
+        if(signals.size() == 0){
+            if(runnable != null){
+                runnable.run();
+            }
+            return;
+        }
         Class<?>[] interfaces = buildCallBack();
         if(runnable != null){
             runnable.run();
@@ -110,15 +115,13 @@ public class Scheduler {
      * Will use callBack to notify when all the signals been dispatched
      */
     public void start(TasksCompleteSignal callback){
-        this.tasksCompleteSignal = callback;
-        validate();
-        Class<?>[] interfaces = buildCallBack();
-        start(interfaces);
-    }
-
-    private void validate() {
         if(signals.size() == 0){
-            throw new IllegalStateException("No signals been added");
+            callback.onTasksComplete();
+        }
+        else {
+            this.tasksCompleteSignal = callback;
+            Class<?>[] interfaces = buildCallBack();
+            start(interfaces);
         }
     }
 

@@ -24,79 +24,125 @@ import java.util.LinkedList;
 public final class Signal<T> {
 
     public final T dispatcher;
-    LinkedList<T> listeners = new LinkedList<>();
-    LinkedList<Class<? extends T>> classListeners = new LinkedList<>();
-    LinkedList<T> oneTimeListeners = new LinkedList<>();
-    LinkedList<Class<T>> oneTimeClassListeners = new LinkedList<>();
+    private final Object synObject = new Object();
+    private final LinkedList<T> listeners = new LinkedList<>();
+    private final LinkedList<T> listenersTMP = new LinkedList<>();
+    private final LinkedList<Class<? extends T>> classListeners = new LinkedList<>();
+    private final LinkedList<Class<? extends T>> classListenersTMP = new LinkedList<>();
+    private final LinkedList<T> oneTimeListeners = new LinkedList<>();
+    private final LinkedList<Class<T>> oneTimeClassListeners = new LinkedList<>();
 
     Signal(Class<T> type) {
+        InvocationHandler invocationHandler = new InvocationHandler() {
+            @Override
+            public Object invoke(Object proxy, Method method, Object[] args) {
+                Signal.this.invoke(method, args);
+                return null;
+            }
+        };
+        //noinspection unchecked
         dispatcher = (T) Proxy.newProxyInstance(type.getClassLoader(), new Class[]{type}, invocationHandler);
     }
 
     public void addListener(T listener) {
-        listeners.add(listener);
+        synchronized (synObject) {
+            listeners.add(listener);
+        }
     }
 
     public void addListener(Class<? extends T> listener) {
-        classListeners.add(listener);
+        synchronized (synObject) {
+            classListeners.add(listener);
+        }
     }
 
     public void addListenerOnce(T listener){
-        oneTimeListeners.add(listener);
+        synchronized (synObject) {
+            oneTimeListeners.add(listener);
+        }
     }
 
     public void addListenerOnce(Class<T> listener){
-        oneTimeClassListeners.add(listener);
+        synchronized (synObject) {
+            oneTimeClassListeners.add(listener);
+        }
     }
 
     public void removeListener(T listener) {
-        listeners.remove(listener);
-        oneTimeListeners.remove(listener);
+        synchronized (synObject) {
+            listeners.remove(listener);
+            oneTimeListeners.remove(listener);
+        }
     }
 
     public void removeListener(Class<? extends T> listener) {
-        classListeners.remove(listener);
-        oneTimeClassListeners.remove(listener);
+        synchronized (synObject) {
+            classListeners.remove(listener);
+            //noinspection SuspiciousMethodCalls
+            oneTimeClassListeners.remove(listener);
+        }
     }
 
-    private InvocationHandler invocationHandler = new InvocationHandler() {
-        @Override
-        public Object invoke(Object proxy, Method method, Object[] args) {
-            for (Object listener : listeners) {
-                invoke(method, args, listener);
-            }
-            for (Object listener : oneTimeListeners) {
-                invoke(method, args, listener);
-            }
-            for (Class<? extends T> classListener : classListeners) {
-                T listener = Factory.inject(classListener);
-                invoke(method, args, listener);
-            }
-            for (Class<T> classListener : oneTimeClassListeners) {
-                T listener = Factory.inject(classListener);
-                invoke(method, args, listener);
-            }
+    void invoke(Method method, Object[] args) {
+        Class<? extends T> classListener;
+        T listener;
 
-            oneTimeListeners.clear();
-            oneTimeClassListeners.clear();
-
-            return null;
-        }
-
-        private void invoke(Method method, Object[] args, Object listener) {
-            try {
-                method.invoke(listener, args);
-            } catch (Throwable e) {
-                e.printStackTrace();
-                if (UnhandledExceptionHandler.callback == null) {
-                    Log.e("LifeCycle", "Unhandled Exception", e);
-                    throw new Error("Unhandled Exception, consider providing UnhandledExceptionHandler.callback");
-                } else {
-                    UnhandledExceptionHandler.callback.onApplicationError(e);
+        if(listeners.size() > 0){
+            while (listeners.size() > 0) {
+                synchronized (synObject) {
+                    listener = listeners.removeFirst();
                 }
+                listenersTMP.add(listener);
+                invoke(method, args, listener);
+            }
+            synchronized (synObject){
+                listeners.addAll(listenersTMP);
+                listenersTMP.clear();
             }
         }
-    };
 
+        while (oneTimeListeners.size() > 0) {
+            synchronized (synObject) {
+                listener = oneTimeListeners.removeFirst();
+            }
+            invoke(method, args, listener);
+        }
 
+        if(classListeners.size() > 0){
+            while (classListeners.size() > 0) {
+                synchronized (synObject) {
+                    classListener = classListeners.removeFirst();
+                }
+                classListenersTMP.add(classListener);
+                listener = Factory.inject(classListener);
+                invoke(method, args, listener);
+            }
+            synchronized (synObject){
+                classListeners.addAll(classListenersTMP);
+                classListenersTMP.clear();
+            }
+        }
+
+        while (oneTimeClassListeners.size() > 0) {
+            synchronized (synObject) {
+                classListener = oneTimeClassListeners.removeFirst();
+            }
+            listener = Factory.inject(classListener);
+            invoke(method, args, listener);
+        }
+    }
+
+    private void invoke(Method method, Object[] args, Object listener) {
+        try {
+            method.invoke(listener, args);
+        } catch (Throwable e) {
+            e.printStackTrace();
+            if (UnhandledExceptionHandler.callback == null) {
+                Log.e("LifeCycle", "Unhandled Exception", e);
+                throw new Error("Unhandled Exception, consider providing UnhandledExceptionHandler.callback");
+            } else {
+                UnhandledExceptionHandler.callback.onApplicationError(e);
+            }
+        }
+    }
 }
