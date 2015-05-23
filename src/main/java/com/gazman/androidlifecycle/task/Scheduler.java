@@ -11,6 +11,8 @@ package com.gazman.androidlifecycle.task;
 import android.os.Handler;
 import android.os.Looper;
 
+import com.gazman.androidlifecycle.Factory;
+import com.gazman.androidlifecycle.log.Logger;
 import com.gazman.androidlifecycle.signal.Signal;
 import com.gazman.androidlifecycle.signal.SignalsBag;
 import com.gazman.androidlifecycle.task.signals.TasksCompleteSignal;
@@ -20,6 +22,7 @@ import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
@@ -32,26 +35,26 @@ public class Scheduler {
     private ArrayList<Signal> signals = new ArrayList<>();
     private TasksCompleteSignal tasksCompleteSignal;
     private long waitForMilliseconds;
+    private Logger logger = Factory.injectWithParams(Logger.class, getClass());
 
     /**
      * Will wait for this signals to be dispatched
-     * @param signals
-     * @return
+     *
+     * @param signals to wait for
+     * @return this Scheduler
      */
-    public Scheduler waitFor(Signal...signals){
-        for (Signal signal : signals) {
-            this.signals.add(signal);
-        }
+    public Scheduler waitFor(Signal... signals) {
+        Collections.addAll(this.signals, signals);
         return this;
     }
 
-    public <T> T create(Class<T> type){
+    public <T> T create(Class<T> type) {
         Signal<T> signal = SignalsBag.create(type);
         waitFor(signal);
         return signal.dispatcher;
     }
 
-    public <T> T inject(Class<T> type){
+    public <T> T inject(Class<T> type) {
         Signal<T> signal = SignalsBag.inject(type);
         waitFor(signal);
         return signal.dispatcher;
@@ -59,10 +62,11 @@ public class Scheduler {
 
     /**
      * Will inject those signals and wait for them to be dispatched
-     * @param signals
-     * @return
+     *
+     * @param signals to wait for
+     * @return this Scheduler
      */
-    public Scheduler waitFor(Class...signals){
+    public Scheduler waitFor(Class... signals) {
         for (Class signal : signals) {
             this.signals.add(SignalsBag.inject(signal));
         }
@@ -71,10 +75,11 @@ public class Scheduler {
 
     /**
      * Adds a time task for the given amount of milliseconds. You can call this method multiple times but only the last one counts.
-     * @param milliseconds
-     * @return
+     *
+     * @param milliseconds to wait
+     * @return this Scheduler
      */
-    public Scheduler waitFor(long milliseconds){
+    public Scheduler waitFor(long milliseconds) {
         waitFor(SignalsBag.inject(TimeOutSignal.class));
         waitForMilliseconds = milliseconds;
         return this;
@@ -83,26 +88,26 @@ public class Scheduler {
     /**
      * Will block this thread until all signals is dispatched
      */
-    public void block(){
+    public void block() {
         blockAfter(null);
     }
 
     /**
      * Will block this thread, right after the execution of the runnable, until  all signals is dispatched
      */
-    public void blockAfter(Runnable runnable){
-        if(signals.size() == 0){
-            if(runnable != null){
+    public void blockAfter(Runnable runnable) {
+        if (signals.size() == 0) {
+            if (runnable != null) {
                 runnable.run();
             }
             return;
         }
         Class<?>[] interfaces = buildCallBack();
-        if(runnable != null){
+        if (runnable != null) {
             runnable.run();
         }
         start(interfaces);
-        synchronized (blocker){
+        synchronized (blocker) {
             try {
                 blocker.wait();
             } catch (InterruptedException e) {
@@ -114,23 +119,35 @@ public class Scheduler {
     /**
      * Will use callBack to notify when all the signals been dispatched
      */
-    public void start(TasksCompleteSignal callback){
-        if(signals.size() == 0){
+    public void start(TasksCompleteSignal callback) {
+        if (signals.size() == 0) {
             callback.onTasksComplete();
-        }
-        else {
+        } else {
             this.tasksCompleteSignal = callback;
             Class<?>[] interfaces = buildCallBack();
             start(interfaces);
         }
     }
 
+    private void logSignals() {
+        StringBuilder stringBuilder = new StringBuilder();
+        for (int i = 0; i < signals.size(); i++) {
+            Signal signal = signals.get(i);
+            stringBuilder.append("\n - ");
+            stringBuilder.append(signal.originalType.getSimpleName());
+        }
+        logger.log("Starting with", stringBuilder);
+    }
+
     private Class<?>[] buildCallBack() {
         ArrayList<Class> interfaces = new ArrayList<>();
         for (Signal signal : signals) {
             Class<?>[] interfacesArray = signal.dispatcher.getClass().getInterfaces();
+            if (interfacesArray.length > 1) {
+                throw new IllegalStateException("Can't handle signals with more than one interface - " + signal.dispatcher.getClass().getName());
+            }
             for (Class<?> aClass : interfacesArray) {
-                if(!interfaces.contains(aClass)){
+                if (!interfaces.contains(aClass)) {
                     interfaces.add(aClass);
                 }
             }
@@ -140,16 +157,18 @@ public class Scheduler {
     }
 
     private void start(Class<?>[] interfaces) {
+        logSignals();
         startTimeTask();
         Callback callback = new Callback();
         Object proxy = Proxy.newProxyInstance(callback.getClass().getClassLoader(), interfaces, callback);
         for (Signal signal : signals) {
+            //noinspection unchecked
             signal.addListenerOnce(proxy);
         }
     }
 
     private void startTimeTask() {
-        if(waitForMilliseconds > 0){
+        if (waitForMilliseconds > 0) {
             handler.postDelayed(new Runnable() {
                 @Override
                 public void run() {
@@ -165,14 +184,15 @@ public class Scheduler {
 
         @Override
         public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
-            if(count.decrementAndGet() <= 0){
-                synchronized (blocker){
+            if (count.decrementAndGet() <= 0) {
+                synchronized (blocker) {
                     blocker.notifyAll();
                 }
-                if(tasksCompleteSignal != null){
+                if (tasksCompleteSignal != null) {
                     tasksCompleteSignal.onTasksComplete();
                 }
             }
+            logger.log("Completed", method.getName(), count);
             return null;
         }
     }

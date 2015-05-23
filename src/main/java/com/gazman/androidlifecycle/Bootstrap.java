@@ -17,10 +17,12 @@ import com.gazman.androidlifecycle.signal.Disposable;
 import com.gazman.androidlifecycle.signal.SignalsBag;
 import com.gazman.androidlifecycle.signal.SignalsHelper;
 import com.gazman.androidlifecycle.signals.BootstrapTimeSignal;
+import com.gazman.androidlifecycle.signals.PostBootstrapTime;
 import com.gazman.androidlifecycle.signals.RegistrationCompleteSignal;
 import com.gazman.androidlifecycle.task.Scheduler;
 import com.gazman.androidlifecycle.task.signals.TasksCompleteSignal;
 
+import java.lang.reflect.Constructor;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
@@ -34,6 +36,7 @@ public abstract class Bootstrap extends Registrar {
     private boolean initializationComplete;
     private RegistrationCompleteSignal registrationCompleteSignal = SignalsBag.inject(RegistrationCompleteSignal.class).dispatcher;
     private BootstrapTimeSignal bootstrapTimeSignal = SignalsBag.inject(BootstrapTimeSignal.class).dispatcher;
+    private PostBootstrapTime postBootstrapTime = SignalsBag.inject(PostBootstrapTime.class).dispatcher;
 
     private static AtomicBoolean bootstrapCompleted = new AtomicBoolean(false);
 
@@ -89,6 +92,7 @@ public abstract class Bootstrap extends Registrar {
 
         Scheduler scheduler = Factory.inject(Scheduler.class);
         bootstrapTimeSignal.onBootstrap(scheduler);
+        postBootstrapTime.onPostBootstrapTime();
         scheduler.block();
         handler.post(new Runnable() {
             @Override
@@ -108,6 +112,7 @@ public abstract class Bootstrap extends Registrar {
                 Registrar.buildersMap.clear();
                 Registrar.classesMap.clear();
                 Registrar.registrars.clear();$SignalsTerminator.exit();
+                ClassConstructor.singletons.clear();
             }
         });
     }

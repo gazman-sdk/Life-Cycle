@@ -24,6 +24,7 @@ import java.util.LinkedList;
 public final class Signal<T> {
 
     public final T dispatcher;
+    public final Class<T> originalType;
     private final Object synObject = new Object();
     private final LinkedList<T> listeners = new LinkedList<>();
     private final LinkedList<T> listenersTMP = new LinkedList<>();
@@ -33,6 +34,7 @@ public final class Signal<T> {
     private final LinkedList<Class<T>> oneTimeClassListeners = new LinkedList<>();
 
     Signal(Class<T> type) {
+        originalType = type;
         InvocationHandler invocationHandler = new InvocationHandler() {
             @Override
             public Object invoke(Object proxy, Method method, Object[] args) {
