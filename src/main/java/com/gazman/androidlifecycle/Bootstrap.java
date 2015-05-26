@@ -22,7 +22,6 @@ import com.gazman.androidlifecycle.signals.RegistrationCompleteSignal;
 import com.gazman.androidlifecycle.task.Scheduler;
 import com.gazman.androidlifecycle.task.signals.TasksCompleteSignal;
 
-import java.lang.reflect.Constructor;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
@@ -31,7 +30,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 public abstract class Bootstrap extends Registrar {
 
     private Handler handler = new Handler(Looper.getMainLooper());
-    private static Object synObject = new Object();
+    private static final Object synObject = new Object();
     private SignalsHelper signalsHelper = new SignalsHelper();
     private boolean initializationComplete;
     private RegistrationCompleteSignal registrationCompleteSignal = SignalsBag.inject(RegistrationCompleteSignal.class).dispatcher;
@@ -39,12 +38,14 @@ public abstract class Bootstrap extends Registrar {
     private PostBootstrapTime postBootstrapTime = SignalsBag.inject(PostBootstrapTime.class).dispatcher;
 
     private static AtomicBoolean bootstrapCompleted = new AtomicBoolean(false);
+    private static AtomicBoolean registrationCompleted = new AtomicBoolean(false);
 
-    /**
-     * Tells you if bootstrap completed or not
-     */
-    public static boolean isComplete(){
+    public static boolean isBootstrapComplete() {
         return bootstrapCompleted.get();
+    }
+
+    public static boolean isRegistrationComplete() {
+        return registrationCompleted.get();
     }
 
     public Bootstrap(Context context) {
@@ -87,6 +88,7 @@ public abstract class Bootstrap extends Registrar {
                 registrar.initSettings();
             }
             initSettings();
+            registrationCompleted.set(true);
             registrars.clear();
         }
 
@@ -103,7 +105,7 @@ public abstract class Bootstrap extends Registrar {
         });
     }
 
-    public static void exit(){
+    public static void exit() {
         Scheduler scheduler = new Scheduler();
         SignalsBag.inject(Disposable.class).dispatcher.onDispose(scheduler);
         scheduler.start(new TasksCompleteSignal() {
@@ -111,7 +113,8 @@ public abstract class Bootstrap extends Registrar {
             public void onTasksComplete() {
                 Registrar.buildersMap.clear();
                 Registrar.classesMap.clear();
-                Registrar.registrars.clear();$SignalsTerminator.exit();
+                Registrar.registrars.clear();
+                $SignalsTerminator.exit();
                 ClassConstructor.singletons.clear();
             }
         });
