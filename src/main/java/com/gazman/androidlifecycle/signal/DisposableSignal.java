@@ -6,16 +6,13 @@
 //	in accordance with the terms of the accompanying license agreement.
 //  http://gazman-sdk.com/license/
 // =================================================================================================
-package com.gazman.androidlifecycle.utils;
+package com.gazman.androidlifecycle.signal;
+
+import com.gazman.androidlifecycle.task.Scheduler;
 
 /**
- * Created by Ilya Gazman on 04-Dec-14.
+ * Created by Ilya Gazman on 5/18/2015.
  */
-public final class UnhandledExceptionHandler {
-
-    public static Callback callback;
-
-    public interface Callback {
-        void onApplicationError(Throwable throwable);
-    }
+public interface DisposableSignal {
+    void onDispose(Scheduler scheduler);
 }

@@ -6,16 +6,11 @@
 //	in accordance with the terms of the accompanying license agreement.
 //  http://gazman-sdk.com/license/
 // =================================================================================================
-package com.gazman.androidlifecycle.utils;
+package com.gazman.androidlifecycle.signals;
 
 /**
- * Created by Ilya Gazman on 04-Dec-14.
+ * Created by Ilya Gazman on 5/23/2015.
  */
-public final class UnhandledExceptionHandler {
-
-    public static Callback callback;
-
-    public interface Callback {
-        void onApplicationError(Throwable throwable);
-    }
+public interface PostBootstrapTime {
+    void onPostBootstrapTime();
 }

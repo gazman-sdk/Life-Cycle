@@ -4,7 +4,7 @@
 //
 //	This is not free software. You can redistribute and/or modify it
 //	in accordance with the terms of the accompanying license agreement.
-//  https://github.com/Ilya-Gazman/android_life_cycle/blob/master/LICENSE.md
+//  http://gazman-sdk.com/license/
 // =================================================================================================
 package com.gazman.androidlifecycle;
 
@@ -16,13 +16,13 @@ import java.util.HashMap;
 class ClassConstructor {
 
     private static final Object[] NO_PARAMS = new Object[0];
-    private static HashMap<Class<?>, HashMap<String, Object>> singletons = new HashMap<Class<?>, HashMap<String, Object>>();
+    static HashMap<Class<?>, HashMap<String, Object>> singletons = new HashMap<>();
 
     @SuppressWarnings("unchecked")
     public static <T> T constructSingleTon(String family, Class<?> classToUse, Object... params) {
         HashMap<String, Object> map = singletons.get(classToUse);
         if (map == null) {
-            map = new HashMap<String, Object>();
+            map = new HashMap<>();
             singletons.put(classToUse, map);
         }
         Object instance = map.get(family);

@@ -6,16 +6,14 @@
 //	in accordance with the terms of the accompanying license agreement.
 //  http://gazman-sdk.com/license/
 // =================================================================================================
-package com.gazman.androidlifecycle.utils;
+package com.gazman.androidlifecycle.signal;
 
 /**
- * Created by Ilya Gazman on 04-Dec-14.
+ * Created by Ilya Gazman on 5/18/2015.
  */
-public final class UnhandledExceptionHandler {
+public class $SignalsTerminator {
 
-    public static Callback callback;
-
-    public interface Callback {
-        void onApplicationError(Throwable throwable);
+    public static void exit(){
+        SignalsBag.map.clear();
     }
 }
