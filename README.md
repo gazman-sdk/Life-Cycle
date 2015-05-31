@@ -6,9 +6,9 @@ Releaselog
 -----------
 **5/31/2015**
 
-- Fixed synchronizations bugs in signal. Now you can add signal while signal is been dispatched, it will be added to the current dispatch cycle or to the next one
- - Added LifeCycle.exit() - It will unregister all the signals in the system and free all the singletons, also it dispatch DisposableSignal so you can add your custom dispose logic
- - Added Logger, I think it's a good idea to have the logger in the top hierarchy of your modules.
+- Fixed synchronizations bugs in signal. Now you can add signal while signal is been dispatched, it will be added to the current dispatch cycle or to the next one.
+- Added LifeCycle.exit() - It will unregister all the signals in the system and free all the singletons, also it dispatch DisposableSignal so you can add your custom dispose logic
+- Added Logger, I think it's a good idea to have the logger in the top hierarchy of your modules.
 
 Usage
 -----
