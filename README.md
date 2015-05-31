@@ -2,7 +2,16 @@ Life Cycle - for android
 ==========
 A light library to speed up everything you are doing.
 
-Take a look for basic usage below or watch the [slid show](https://docs.google.com/presentation/d/181WIzXmmO7e16gPUp_sV2lsfFfhR2z8mh2VsDcotBNU/pub?start=false&loop=false&delayms=3000) for full docomintation:
+Release log
+-----------
+**5/31/2015**
+
+ - Fixed synchronizations bugs in signal. Now you can add signal while signal is been dispatched, it will be added to the current dispatch cycle or to the next one
+ - Added LifeCycle.exit() - It will unregister all the signals in the system and free all the singletons, also it dispatch DisposableSignal so you can add your custome dispose logic
+
+Usage
+-----
+Lear how to use life cycle in the official [slid show](https://docs.google.com/presentation/d/181WIzXmmO7e16gPUp_sV2lsfFfhR2z8mh2VsDcotBNU/pub?start=false&loop=false&delayms=3000) that covers all life cycle futures or read the top futures belaw.
 
 Factory
 -------
@@ -44,8 +53,11 @@ class B{
 ```
 
 Both classes **A** and **B** have the same reference to **MyModel** class.
+ 
+- In adition to that you can replace singleton with extended version of it in all the places where it been use.
+- When exit the application, you can free all the singletons in your system at once and allow GC to collect them.
 
- - To inject class with constructor parameters, call **Factory.injectWithParams()**
+ * To inject class with constructor parameters, call **Factory.injectWithParams()**
 
 Signals
 -------
@@ -144,7 +156,7 @@ class B implements SayHiSignal{
  - There could be multiple listeners for each signal
  - It is possible to register and unregister from signal.
  - Also signal got the method **addListenerOnce()**, it will automaticaly unregister the listener after the first dispatch of the signal
- - SignalsBag got two methods: **inject** and **create**, inject is to use signal as singleton and create to create new instance of the signal.
+ - SignalsBag got two methods: **inject** and **create**, "inject" is to use signal as singleton and "create" to create new instance of the signal.
  
 See the full documintation in [slide Show](https://docs.google.com/presentation/d/181WIzXmmO7e16gPUp_sV2lsfFfhR2z8mh2VsDcotBNU/pub?start=false&loop=false&delayms=3000)
 
