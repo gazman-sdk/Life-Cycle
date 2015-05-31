@@ -2,12 +2,13 @@ Life Cycle - for android
 ==========
 A light library to speed up everything you are doing.
 
-Release log
+Releaselog
 -----------
 **5/31/2015**
 
- - Fixed synchronizations bugs in signal. Now you can add signal while signal is been dispatched, it will be added to the current dispatch cycle or to the next one
- - Added LifeCycle.exit() - It will unregister all the signals in the system and free all the singletons, also it dispatch DisposableSignal so you can add your custome dispose logic
+- Fixed synchronizations bugs in signal. Now you can add signal while signal is been dispatched, it will be added to the current dispatch cycle or to the next one
+ - Added LifeCycle.exit() - It will unregister all the signals in the system and free all the singletons, also it dispatch DisposableSignal so you can add your custom dispose logic
+ - Added Logger, I think it's a good idea to have the logger in the top hierarchy of your modules.
 
 Usage
 -----
@@ -15,7 +16,7 @@ Lear how to use life cycle in the official [slid show](https://docs.google.com/p
 
 Factory
 -------
-How would you usualy create a Singleton in Android?
+How would you usually create a Singleton in Android?
 
 ```Java
 class MyModel{
@@ -54,7 +55,7 @@ class B{
 
 Both classes **A** and **B** have the same reference to **MyModel** class.
  
-- In adition to that you can replace singleton with extended version of it in all the places where it been use.
+- In addition to that you can replace singleton with extended version of it in all the places where it been use.
 - When exit the application, you can free all the singletons in your system at once and allow GC to collect them.
 
  * To inject class with constructor parameters, call **Factory.injectWithParams()**
