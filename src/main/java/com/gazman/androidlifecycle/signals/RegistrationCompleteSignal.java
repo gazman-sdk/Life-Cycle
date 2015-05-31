@@ -4,12 +4,12 @@
 //
 //	This is not free software. You can redistribute and/or modify it
 //	in accordance with the terms of the accompanying license agreement.
-//  https://github.com/Ilya-Gazman/android_life_cycle/blob/master/LICENSE.md
+//  http://gazman-sdk.com/license/
 // =================================================================================================
 package com.gazman.androidlifecycle.signals;
 
 /**
- * Created by Gazman on 2/24/2015.
+ * Created by Ilya Gazman on 2/24/2015.
  */
 public interface RegistrationCompleteSignal {
     void registrationCompleteHandler();

@@ -4,7 +4,7 @@
 //
 //	This is not free software. You can redistribute and/or modify it
 //	in accordance with the terms of the accompanying license agreement.
-//  https://github.com/Ilya-Gazman/android_life_cycle/blob/master/LICENSE.md
+//  http://gazman-sdk.com/license/
 // =================================================================================================
 package com.gazman.androidlifecycle.signal;
 
@@ -19,7 +19,7 @@ import java.lang.reflect.Proxy;
 import java.util.LinkedList;
 
 /**
- * Created by Gazman on 2/24/2015.
+ * Created by Ilya Gazman on 2/24/2015.
  */
 public final class Signal<T> {
 
@@ -31,7 +31,7 @@ public final class Signal<T> {
     private final LinkedList<Class<? extends T>> classListeners = new LinkedList<>();
     private final LinkedList<Class<? extends T>> classListenersTMP = new LinkedList<>();
     private final LinkedList<T> oneTimeListeners = new LinkedList<>();
-    private final LinkedList<Class<T>> oneTimeClassListeners = new LinkedList<>();
+    private final LinkedList<Class<? extends T>> oneTimeClassListeners = new LinkedList<>();
 
     Signal(Class<T> type) {
         originalType = type;
@@ -46,30 +46,57 @@ public final class Signal<T> {
         dispatcher = (T) Proxy.newProxyInstance(type.getClassLoader(), new Class[]{type}, invocationHandler);
     }
 
+    /**
+     * Register for this signal, until removeListener is called.
+     * @param listener listener to register
+     */
     public void addListener(T listener) {
         synchronized (synObject) {
             listeners.add(listener);
         }
     }
 
+    /**
+     * Register for this signal, until removeListener is called.
+     * The listener will be injected each time before its been dispatched to.
+     * @param listener the listener class to inject when dispatch is happening
+     */
     public void addListener(Class<? extends T> listener) {
         synchronized (synObject) {
             classListeners.add(listener);
         }
     }
 
+    /**
+     * Same as add listener, only it will immediately unregister
+     * after the first dispatch.
+     * Note that it does not matter how many method this listener got in the interface,
+     * it will unregister after the first one to be dispatched
+     * @param listener listener to register
+     */
     public void addListenerOnce(T listener){
         synchronized (synObject) {
             oneTimeListeners.add(listener);
         }
     }
 
-    public void addListenerOnce(Class<T> listener){
+    /**
+     * Same as add listener, only it will immediately unregister
+     * after the first dispatch.
+     * Note that it does not matter how many method this listener got in the interface,
+     * it will unregister after the first one to be dispatched
+     * @param listener the listener class to inject when dispatch is happening
+     */
+    public void addListenerOnce(Class<? extends T> listener){
         synchronized (synObject) {
             oneTimeClassListeners.add(listener);
         }
     }
 
+    /**
+     * Remove listener that been added thru addListener or addListenerOnce
+     * @param listener listener to unregister
+     */
     public void removeListener(T listener) {
         synchronized (synObject) {
             listeners.remove(listener);
@@ -77,6 +104,10 @@ public final class Signal<T> {
         }
     }
 
+    /**
+     * Remove listener that been added thru addListener or addListenerOnce
+     * @param listener listener to unregister
+     */
     public void removeListener(Class<? extends T> listener) {
         synchronized (synObject) {
             classListeners.remove(listener);

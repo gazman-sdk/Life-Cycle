@@ -1,3 +1,11 @@
+// =================================================================================================
+//	Life Cycle Framework for native android
+//	Copyright 2014 Ilya Gazman. All Rights Reserved.
+//
+//	This is not free software. You can redistribute and/or modify it
+//	in accordance with the terms of the accompanying license agreement.
+//  http://gazman-sdk.com/license/
+// =================================================================================================
 package com.gazman.androidlifecycle;
 
 import com.gazman.androidlifecycle.log.Logger;
@@ -26,6 +34,12 @@ public final class SettingsInstance {
 
         }
     };
+
+    /**
+     * Since Logger is used in LifeCycle the only way to override it
+     * in life cycle as well, is using this method
+     * @param loggerClass the new logger to use
+     */
     public void setLogger(Class<? extends Logger> loggerClass){
         registrar.registerClass(loggerClass);
     }

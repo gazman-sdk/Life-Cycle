@@ -4,14 +4,14 @@
 //
 //	This is not free software. You can redistribute and/or modify it
 //	in accordance with the terms of the accompanying license agreement.
-//  https://github.com/Ilya-Gazman/android_life_cycle/blob/master/LICENSE.md
+//  http://gazman-sdk.com/license/
 // =================================================================================================
 package com.gazman.androidlifecycle.signal;
 
 import java.util.HashMap;
 
 /**
- * Created by Gazman on 2/24/2015.
+ * Created by Ilya Gazman on 2/24/2015.
  */
 public final class SignalsBag {
 
@@ -20,11 +20,12 @@ public final class SignalsBag {
     private SignalsBag() {}
 
     /**
-     * Will get you a signal from the given type, there will be only one instance of it in the system
+     * Will get you a signal from the given interface type, there will be only one instance of it in the system
      * @param type the signal type
      * @return Signal from given type
      */
     public static <T> Signal<T> inject(Class<T> type) {
+        @SuppressWarnings("unchecked")
         Signal<T> signal = map.get(type);
         if (signal == null) {
             signal = new Signal<T>(type);
@@ -35,10 +36,11 @@ public final class SignalsBag {
 
     /**
      * Create new signal from given type
-     * @param type
+     * @param type the interface type
      * @return Signal from given type
      */
     public static <T> Signal<T> create(Class<T> type) {
+        //noinspection unchecked
         return new Signal(type);
     }
 

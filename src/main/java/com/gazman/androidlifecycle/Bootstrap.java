@@ -4,7 +4,7 @@
 //
 //	This is not free software. You can redistribute and/or modify it
 //	in accordance with the terms of the accompanying license agreement.
-//  https://github.com/Ilya-Gazman/android_life_cycle/blob/master/LICENSE.md
+//  http://gazman-sdk.com/license/
 // =================================================================================================
 package com.gazman.androidlifecycle;
 
@@ -13,7 +13,7 @@ import android.os.Handler;
 import android.os.Looper;
 
 import com.gazman.androidlifecycle.signal.$SignalsTerminator;
-import com.gazman.androidlifecycle.signal.Disposable;
+import com.gazman.androidlifecycle.signal.DisposableSignal;
 import com.gazman.androidlifecycle.signal.SignalsBag;
 import com.gazman.androidlifecycle.signal.SignalsHelper;
 import com.gazman.androidlifecycle.signals.BootstrapTimeSignal;
@@ -25,7 +25,7 @@ import com.gazman.androidlifecycle.task.signals.TasksCompleteSignal;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
- * Created by Gazman on 2/17/2015.
+ * Created by Ilya Gazman on 2/17/2015.
  */
 public abstract class Bootstrap extends Registrar {
 
@@ -93,21 +93,27 @@ public abstract class Bootstrap extends Registrar {
         }
 
         Scheduler scheduler = Factory.inject(Scheduler.class);
+        scheduler.setLogTag("Bootstrap");
         bootstrapTimeSignal.onBootstrap(scheduler);
         postBootstrapTime.onPostBootstrapTime();
         scheduler.block();
         handler.post(new Runnable() {
             @Override
             public void run() {
-                registrationCompleteSignal.registrationCompleteHandler();
+                registrationCompleteSignal.registrationCompleteHandler  ();
                 bootstrapCompleted.set(true);
             }
         });
     }
 
+    /**
+     *  Will dispatch DisposableSignal and then:<br>
+     *  - Will unregister all the signals in the system<br>
+     *  - Will remove all the singletons in the system, so GC will be able to destroy them
+     */
     public static void exit() {
         Scheduler scheduler = new Scheduler();
-        SignalsBag.inject(Disposable.class).dispatcher.onDispose(scheduler);
+        SignalsBag.inject(DisposableSignal.class).dispatcher.onDispose(scheduler);
         scheduler.start(new TasksCompleteSignal() {
             @Override
             public void onTasksComplete() {

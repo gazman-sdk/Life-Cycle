@@ -4,7 +4,7 @@
 //
 //	This is not free software. You can redistribute and/or modify it
 //	in accordance with the terms of the accompanying license agreement.
-//  https://github.com/Ilya-Gazman/android_life_cycle/blob/master/LICENSE.md
+//  http://gazman-sdk.com/license/
 // =================================================================================================
 package com.gazman.androidlifecycle.task;
 
@@ -26,7 +26,7 @@ import java.util.Collections;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
- * Created by Gazman on 3/4/2015.
+ * Created by Ilya Gazman on 3/4/2015.
  */
 public class Scheduler {
 
@@ -38,7 +38,18 @@ public class Scheduler {
     private Logger logger = Factory.injectWithParams(Logger.class, getClass());
 
     /**
-     * Will wait for this signals to be dispatched
+     * Will prefix the tag to Scheduler for its logs
+     *
+     * @param tag the tag to prefix
+     * @return this Scheduler
+     */
+    public Scheduler setLogTag(String tag) {
+        logger.setPrefix(tag);
+        return this;
+    }
+
+    /**
+     * Will wait for those signals to be dispatched
      *
      * @param signals to wait for
      * @return this Scheduler
@@ -48,12 +59,26 @@ public class Scheduler {
         return this;
     }
 
+    /**
+     * Create and wait for that signal to be dispatched.
+     *
+     * @param type Signal class
+     * @param <T>  Signal type
+     * @return The newly created signal
+     */
     public <T> T create(Class<T> type) {
         Signal<T> signal = SignalsBag.create(type);
         waitFor(signal);
         return signal.dispatcher;
     }
 
+    /**
+     * Injects and wait for that signal to be dispatched.
+     *
+     * @param type Signal class
+     * @param <T>  Signal type
+     * @return The newly injected signal
+     */
     public <T> T inject(Class<T> type) {
         Signal<T> signal = SignalsBag.inject(type);
         waitFor(signal);
@@ -74,7 +99,8 @@ public class Scheduler {
     }
 
     /**
-     * Adds a time task for the given amount of milliseconds. You can call this method multiple times but only the last one counts.
+     * Adds a time task for the given amount of milliseconds.
+     * You can call this method multiple times but only the last one counts.
      *
      * @param milliseconds to wait
      * @return this Scheduler
@@ -86,14 +112,15 @@ public class Scheduler {
     }
 
     /**
-     * Will block this thread until all signals is dispatched
+     * Will block this thread until all signals are dispatched
      */
     public void block() {
         blockAfter(null);
     }
 
     /**
-     * Will block this thread, right after the execution of the runnable, until  all signals is dispatched
+     * Will block this thread, right after the execution of the runnable
+     * and until all the signals been dispatched
      */
     public void blockAfter(Runnable runnable) {
         if (signals.size() == 0) {
@@ -163,7 +190,7 @@ public class Scheduler {
         Object proxy = Proxy.newProxyInstance(callback.getClass().getClassLoader(), interfaces, callback);
         for (Signal signal : signals) {
             //noinspection unchecked
-            signal.addListenerOnce(proxy);
+            signal.addListener(proxy);
         }
     }
 
@@ -189,6 +216,10 @@ public class Scheduler {
                     blocker.notifyAll();
                 }
                 if (tasksCompleteSignal != null) {
+                    for (Signal signal : signals) {
+                        //noinspection unchecked
+                        signal.removeListener(this);
+                    }
                     tasksCompleteSignal.onTasksComplete();
                 }
             }
