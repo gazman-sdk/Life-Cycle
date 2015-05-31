@@ -12,7 +12,7 @@ Releaselog
 
 Usage
 -----
-Lear how to use life cycle in the official [slid show](https://docs.google.com/presentation/d/181WIzXmmO7e16gPUp_sV2lsfFfhR2z8mh2VsDcotBNU/pub?start=false&loop=false&delayms=3000) that covers all life cycle futures or read the top futures belaw.
+Lear how to use life cycle in the official [slid show](https://docs.google.com/presentation/d/181WIzXmmO7e16gPUp_sV2lsfFfhR2z8mh2VsDcotBNU/pub?start=false&loop=false&delayms=3000). It covers all life cycle futures, or read the top futures belaw.
 
 Factory
 -------
