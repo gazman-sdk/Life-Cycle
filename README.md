@@ -147,3 +147,13 @@ class B implements SayHiSignal{
  - SignalsBag got two methods: **inject** and **create**, inject is to use signal as singleton and create to create new instance of the signal.
  
 See the full documintation in [slide Show](https://docs.google.com/presentation/d/181WIzXmmO7e16gPUp_sV2lsfFfhR2z8mh2VsDcotBNU/pub?start=false&loop=false&delayms=3000)
+
+License
+-------
+Copyright 2014 Ilya Gazman
+
+Licensed under the Coffe License (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+   http://gazman-sdk.com/license/
