@@ -59,6 +59,7 @@ public abstract class Bootstrap extends Registrar {
         new Thread(new Runnable() {
             @Override
             public void run() {
+                Looper.prepare();
                 initialize();
             }
         }, "Registration Thread").start();
