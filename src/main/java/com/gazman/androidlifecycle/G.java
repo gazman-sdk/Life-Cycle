@@ -10,6 +10,7 @@ package com.gazman.androidlifecycle;
 
 import android.content.Context;
 import android.content.ContextWrapper;
+import android.os.Build;
 import android.os.Handler;
 import android.os.Looper;
 
@@ -20,6 +21,7 @@ public class G extends ContextWrapper {
 
     public static final Context app = new G();
     public static final Handler main = new Handler(Looper.getMainLooper());
+    public static final int version = Build.VERSION.SDK_INT;
 
     private G() {
         super(null);
@@ -27,11 +29,12 @@ public class G extends ContextWrapper {
 
 
     private static boolean initialized = false;
+
     static void setApp(Context context) {
-        if(initialized){
+        if (initialized) {
             return;
         }
         initialized = true;
-        ((G)app).attachBaseContext(context.getApplicationContext());
+        ((G) app).attachBaseContext(context.getApplicationContext());
     }
 }

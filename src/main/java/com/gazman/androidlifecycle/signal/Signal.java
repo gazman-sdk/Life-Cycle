@@ -51,6 +51,7 @@ public final class Signal<T> {
      * @param listener listener to register
      */
     public void addListener(T listener) {
+        validateListener(listener);
         synchronized (synObject) {
             listeners.add(listener);
         }
@@ -62,6 +63,7 @@ public final class Signal<T> {
      * @param listener the listener class to inject when dispatch is happening
      */
     public void addListener(Class<? extends T> listener) {
+        validateListener(listener);
         synchronized (synObject) {
             classListeners.add(listener);
         }
@@ -75,6 +77,7 @@ public final class Signal<T> {
      * @param listener listener to register
      */
     public void addListenerOnce(T listener){
+        validateListener(listener);
         synchronized (synObject) {
             oneTimeListeners.add(listener);
         }
@@ -88,8 +91,15 @@ public final class Signal<T> {
      * @param listener the listener class to inject when dispatch is happening
      */
     public void addListenerOnce(Class<? extends T> listener){
+        validateListener(listener);
         synchronized (synObject) {
             oneTimeClassListeners.add(listener);
+        }
+    }
+
+    private void validateListener(Object listener) {
+        if(listener == null){
+            throw new NullPointerException("Listener can't be null");
         }
     }
 
@@ -98,6 +108,7 @@ public final class Signal<T> {
      * @param listener listener to unregister
      */
     public void removeListener(T listener) {
+        validateListener(listener);
         synchronized (synObject) {
             listeners.remove(listener);
             oneTimeListeners.remove(listener);
@@ -109,6 +120,7 @@ public final class Signal<T> {
      * @param listener listener to unregister
      */
     public void removeListener(Class<? extends T> listener) {
+        validateListener(listener);
         synchronized (synObject) {
             classListeners.remove(listener);
             //noinspection SuspiciousMethodCalls
