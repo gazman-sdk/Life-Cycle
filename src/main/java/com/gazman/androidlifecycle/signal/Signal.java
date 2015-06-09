@@ -51,10 +51,7 @@ public final class Signal<T> {
      * @param listener listener to register
      */
     public void addListener(T listener) {
-        validateListener(listener);
-        synchronized (synObject) {
-            listeners.add(listener);
-        }
+        applyListener(listeners, listener);
     }
 
     /**
@@ -63,10 +60,7 @@ public final class Signal<T> {
      * @param listener the listener class to inject when dispatch is happening
      */
     public void addListener(Class<? extends T> listener) {
-        validateListener(listener);
-        synchronized (synObject) {
-            classListeners.add(listener);
-        }
+        applyListener(classListeners, listener);
     }
 
     /**
@@ -77,10 +71,7 @@ public final class Signal<T> {
      * @param listener listener to register
      */
     public void addListenerOnce(T listener){
-        validateListener(listener);
-        synchronized (synObject) {
-            oneTimeListeners.add(listener);
-        }
+        applyListener(oneTimeListeners, listener);
     }
 
     /**
@@ -91,9 +82,15 @@ public final class Signal<T> {
      * @param listener the listener class to inject when dispatch is happening
      */
     public void addListenerOnce(Class<? extends T> listener){
+        applyListener(oneTimeClassListeners, listener);
+    }
+
+    private <TYPE> void applyListener(LinkedList<TYPE> list, TYPE listener) {
         validateListener(listener);
         synchronized (synObject) {
-            oneTimeClassListeners.add(listener);
+            if (!list.contains(listener)) {
+                list.add(listener);
+            }
         }
     }
 
