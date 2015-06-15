@@ -70,7 +70,7 @@ public class SignalsHelper {
      */
     public <T> void addListener(Class<T> type, final Class<? extends T> listener) {
         final Signal<T> signal = SignalsBag.inject(type);
-        if (listener.isAssignableFrom(SingleTon.class)) {
+        if (SingleTon.class.isAssignableFrom(listener)) {
             signal.addListener(Factory.inject(listener));
         } else {
             signal.addListener(listener);
