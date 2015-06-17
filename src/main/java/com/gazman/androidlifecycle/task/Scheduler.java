@@ -18,16 +18,14 @@ import com.gazman.androidlifecycle.signal.SignalsBag;
 import com.gazman.androidlifecycle.task.signals.TasksCompleteSignal;
 import com.gazman.androidlifecycle.task.signals.TimeOutSignal;
 
-import java.lang.reflect.InvocationHandler;
-import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * Created by Ilya Gazman on 3/4/2015.
  */
+@SuppressWarnings("unused")
 public class Scheduler {
 
     private Handler handler = new Handler(Looper.getMainLooper());
@@ -35,7 +33,8 @@ public class Scheduler {
     private ArrayList<Signal> signals = new ArrayList<>();
     private TasksCompleteSignal tasksCompleteSignal;
     private long waitForMilliseconds;
-    private Logger logger = Factory.injectWithParams(Logger.class, getClass());
+    private Logger logger = Factory.injectWithParams(Logger.class, "Scheduler");
+    private boolean started;
 
     /**
      * Will prefix the tag to Scheduler for its logs
@@ -183,14 +182,33 @@ public class Scheduler {
         return interfaces.toArray(new Class[interfaces.size()]);
     }
 
-    private void start(Class<?>[] interfaces) {
+    private synchronized void start(Class<?>[] interfaces) {
+        if (started) {
+            throw new IllegalStateException("Scheduler already started, it cannot be reused");
+        }
+        started = true;
         logSignals();
         startTimeTask();
-        Callback callback = new Callback();
-        Object proxy = Proxy.newProxyInstance(callback.getClass().getClassLoader(), interfaces, callback);
+        ClassLoader classLoader = getClass().getClassLoader();
+
+        SchedulerCallback schedulerCallback = new SchedulerCallback();
+        schedulerCallback.init(signals.size());
+        schedulerCallback.callback = new Runnable() {
+            @Override
+            public void run() {
+                synchronized (blocker) {
+                    blocker.notifyAll();
+                }
+                if (tasksCompleteSignal != null) {
+                    tasksCompleteSignal.onTasksComplete();
+                }
+            }
+        };
         for (Signal signal : signals) {
+            Object proxy = Proxy.newProxyInstance(classLoader,
+                    interfaces, schedulerCallback.createHandler());
             //noinspection unchecked
-            signal.addListener(proxy);
+            signal.addListenerOnce(proxy);
         }
     }
 
@@ -202,29 +220,6 @@ public class Scheduler {
                     SignalsBag.inject(TimeOutSignal.class).dispatcher.onTimeOut();
                 }
             }, waitForMilliseconds);
-        }
-    }
-
-    private class Callback implements InvocationHandler {
-
-        private AtomicInteger count = new AtomicInteger(signals.size());
-
-        @Override
-        public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
-            if (count.decrementAndGet() <= 0) {
-                synchronized (blocker) {
-                    blocker.notifyAll();
-                }
-                if (tasksCompleteSignal != null) {
-                    for (Signal signal : signals) {
-                        //noinspection unchecked
-                        signal.removeListener(this);
-                    }
-                    tasksCompleteSignal.onTasksComplete();
-                }
-            }
-            logger.log("Completed", method.getName(), count);
-            return null;
         }
     }
 }

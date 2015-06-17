@@ -9,8 +9,7 @@
 package com.gazman.androidlifecycle;
 
 import android.content.Context;
-import android.os.Handler;
-import android.os.Looper;
+import android.os.*;
 
 import com.gazman.androidlifecycle.signal.$SignalsTerminator;
 import com.gazman.androidlifecycle.signal.DisposableSignal;
@@ -39,6 +38,8 @@ public abstract class Bootstrap extends Registrar {
 
     private static AtomicBoolean bootstrapCompleted = new AtomicBoolean(false);
     private static AtomicBoolean registrationCompleted = new AtomicBoolean(false);
+
+    public static boolean killProcessOnExit = false;
 
     public static boolean isBootstrapComplete() {
         return bootstrapCompleted.get();
@@ -123,6 +124,9 @@ public abstract class Bootstrap extends Registrar {
                 Registrar.registrars.clear();
                 $SignalsTerminator.exit();
                 ClassConstructor.singletons.clear();
+                if (killProcessOnExit) {
+                    android.os.Process.killProcess(android.os.Process.myPid());
+                }
             }
         });
     }
