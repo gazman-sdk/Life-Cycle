@@ -1,4 +1,4 @@
-Life Cycle - for android
+Life Cycle - [V.6.17.2015](https://github.com/Ilya-Gazman/android_life_cycle/wiki/Releaselog)
 ==========
 A light library to speed up everything you are doing.
 
