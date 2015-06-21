@@ -32,4 +32,8 @@ public class SchedulerCallback {
             }
         };
     }
+
+    public void addOne(){
+        count.incrementAndGet();
+    }
 }

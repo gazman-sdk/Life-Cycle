@@ -35,6 +35,7 @@ public class Scheduler {
     private long waitForMilliseconds;
     private Logger logger = Factory.injectWithParams(Logger.class, "Scheduler");
     private boolean started;
+    private SchedulerCallback schedulerCallback;
 
     /**
      * Will prefix the tag to Scheduler for its logs
@@ -54,7 +55,22 @@ public class Scheduler {
      * @return this Scheduler
      */
     public Scheduler waitFor(Signal... signals) {
-        Collections.addAll(this.signals, signals);
+        if(!started){
+            Collections.addAll(this.signals, signals);
+        }
+        else{
+            ArrayList<Signal> list = new ArrayList<>();
+            Collections.addAll(list, signals);
+            Class<?>[] interfaces = buildCallBack(list);
+            for (Signal signal : signals) {
+                Object proxy = Proxy.newProxyInstance(signals.getClass().getClassLoader(),
+                        interfaces, schedulerCallback.createHandler());
+                //noinspection unchecked
+                signal.addListenerOnce(proxy);
+                schedulerCallback.addOne();
+            }
+        }
+
         return this;
     }
 
@@ -91,8 +107,9 @@ public class Scheduler {
      * @return this Scheduler
      */
     public Scheduler waitFor(Class... signals) {
-        for (Class signal : signals) {
-            this.signals.add(SignalsBag.inject(signal));
+        for (Class signalClass : signals) {
+            Signal signal = SignalsBag.inject(signalClass);
+            waitFor(signal);
         }
         return this;
     }
@@ -128,7 +145,7 @@ public class Scheduler {
             }
             return;
         }
-        Class<?>[] interfaces = buildCallBack();
+        Class<?>[] interfaces = buildCallBack(signals);
         if (runnable != null) {
             runnable.run();
         }
@@ -150,7 +167,7 @@ public class Scheduler {
             callback.onTasksComplete();
         } else {
             this.tasksCompleteSignal = callback;
-            Class<?>[] interfaces = buildCallBack();
+            Class<?>[] interfaces = buildCallBack(signals);
             start(interfaces);
         }
     }
@@ -165,7 +182,7 @@ public class Scheduler {
         logger.log("Starting with", stringBuilder);
     }
 
-    private Class<?>[] buildCallBack() {
+    private Class<?>[] buildCallBack(ArrayList<Signal> signals) {
         ArrayList<Class> interfaces = new ArrayList<>();
         for (Signal signal : signals) {
             Class<?>[] interfacesArray = signal.dispatcher.getClass().getInterfaces();
@@ -191,7 +208,8 @@ public class Scheduler {
         startTimeTask();
         ClassLoader classLoader = getClass().getClassLoader();
 
-        SchedulerCallback schedulerCallback = new SchedulerCallback();
+        this.schedulerCallback = new SchedulerCallback();
+        SchedulerCallback schedulerCallback = this.schedulerCallback;
         schedulerCallback.init(signals.size());
         schedulerCallback.callback = new Runnable() {
             @Override

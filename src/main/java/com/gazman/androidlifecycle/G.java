@@ -30,6 +30,9 @@ public class G extends ContextWrapper {
     public static String getDeviceUniqueID(){
         return uuid;
     }
+    public static String getPlayStoreLink(){
+        return "https://market.android.com/details?id=" + G.app.getPackageName();
+    }
 
     private G() {
         super(null);

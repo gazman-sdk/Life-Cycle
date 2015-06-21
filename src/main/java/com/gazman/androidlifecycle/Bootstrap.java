@@ -39,7 +39,7 @@ public abstract class Bootstrap extends Registrar {
     private static AtomicBoolean bootstrapCompleted = new AtomicBoolean(false);
     private static AtomicBoolean registrationCompleted = new AtomicBoolean(false);
 
-    public static boolean killProcessOnExit = false;
+    protected static boolean killProcessOnExit = false;
 
     public static boolean isBootstrapComplete() {
         return bootstrapCompleted.get();

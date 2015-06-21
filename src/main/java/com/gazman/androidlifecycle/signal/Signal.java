@@ -178,7 +178,6 @@ public final class Signal<T> {
         try {
             method.invoke(listener, args);
         } catch (Throwable e) {
-            e.printStackTrace();
             if (UnhandledExceptionHandler.callback == null) {
                 Log.e("LifeCycle", "Unhandled Exception", e);
                 throw new Error("Unhandled Exception, consider providing UnhandledExceptionHandler.callback");
