@@ -1,8 +1,6 @@
 package com.gazman.androidlifecycle.task;
 
-import com.gazman.androidlifecycle.Factory;
 import com.gazman.androidlifecycle.log.Logger;
-import com.gazman.androidlifecycle.signal.Signal;
 
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
@@ -13,7 +11,7 @@ import java.util.concurrent.atomic.AtomicInteger;
  */
 public class SchedulerCallback {
     private AtomicInteger count;
-    private Logger logger = Factory.injectWithParams(Logger.class, "Scheduler");
+    private Logger logger = Logger.create("Scheduler");
     public Runnable callback;
 
     public void init(int count){

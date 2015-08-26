@@ -11,7 +11,6 @@ package com.gazman.androidlifecycle.task;
 import android.os.Handler;
 import android.os.Looper;
 
-import com.gazman.androidlifecycle.Factory;
 import com.gazman.androidlifecycle.log.Logger;
 import com.gazman.androidlifecycle.signal.Signal;
 import com.gazman.androidlifecycle.signal.SignalsBag;
@@ -33,7 +32,7 @@ public class Scheduler {
     private ArrayList<Signal> signals = new ArrayList<>();
     private TasksCompleteSignal tasksCompleteSignal;
     private long waitForMilliseconds;
-    private Logger logger = Factory.injectWithParams(Logger.class, "Scheduler");
+    private Logger logger = Logger.create("Scheduler");
     private boolean started;
     private SchedulerCallback schedulerCallback;
 
