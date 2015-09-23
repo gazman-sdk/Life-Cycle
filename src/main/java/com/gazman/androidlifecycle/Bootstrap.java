@@ -31,7 +31,7 @@ public abstract class Bootstrap extends Registrar {
     private Handler handler = new Handler(Looper.getMainLooper());
     private static final Object synObject = new Object();
     private SignalsHelper signalsHelper = new SignalsHelper();
-    private boolean initializationComplete;
+    private boolean coreInitialization;
     private RegistrationCompleteSignal registrationCompleteSignal = SignalsBag.inject(RegistrationCompleteSignal.class).dispatcher;
     private BootstrapTimeSignal bootstrapTimeSignal = SignalsBag.inject(BootstrapTimeSignal.class).dispatcher;
     private PostBootstrapTime postBootstrapTime = SignalsBag.inject(PostBootstrapTime.class).dispatcher;
@@ -67,31 +67,29 @@ public abstract class Bootstrap extends Registrar {
     }
 
     /**
+     * Start the initialization process
+     */
+    public void initializeOnly(final Runnable completeCallback) {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                Looper.prepare();
+                synchronized (synObject) {
+                    if (!coreInitialization) {
+                        coreInitialize();
+                    }
+                    G.main.post(completeCallback);
+                }
+            }
+        }, "Registration Thread").start();
+    }
+
+    /**
      * The entry point to the initialization process
      */
     private void initialize() {
         synchronized (synObject) {
-            if (initializationComplete) {
-                throw new IllegalStateException(
-                        "Initialization process has already been executed.");
-            }
-            initializationComplete = true;
-            initRegistrars();
-            for (Registrar registrar : registrars) {
-                registrar.initClasses();
-            }
-            initClasses();
-            for (Registrar registrar : registrars) {
-                registrar.initSignals(signalsHelper);
-            }
-            initSignals(signalsHelper);
-
-            for (Registrar registrar : registrars) {
-                registrar.initSettings();
-            }
-            initSettings();
-            registrationCompleted.set(true);
-            registrars.clear();
+            coreInitialize();
         }
 
         Scheduler scheduler = Factory.inject(Scheduler.class);
@@ -102,16 +100,40 @@ public abstract class Bootstrap extends Registrar {
         handler.post(new Runnable() {
             @Override
             public void run() {
-                registrationCompleteSignal.registrationCompleteHandler  ();
+                registrationCompleteSignal.registrationCompleteHandler();
                 bootstrapCompleted.set(true);
             }
         });
     }
 
+    private void coreInitialize() {
+        if (coreInitialization) {
+            throw new IllegalStateException(
+                    "Initialization process has already been executed.");
+        }
+        coreInitialization = true;
+        initRegistrars();
+        for (Registrar registrar : registrars) {
+            registrar.initClasses();
+        }
+        initClasses();
+        for (Registrar registrar : registrars) {
+            registrar.initSignals(signalsHelper);
+        }
+        initSignals(signalsHelper);
+
+        for (Registrar registrar : registrars) {
+            registrar.initSettings();
+        }
+        initSettings();
+        registrationCompleted.set(true);
+        registrars.clear();
+    }
+
     /**
-     *  Will dispatch DisposableSignal and then:<br>
-     *  - Will unregister all the signals in the system<br>
-     *  - Will remove all the singletons in the system, so GC will be able to destroy them
+     * Will dispatch DisposableSignal and then:<br>
+     * - Will unregister all the signals in the system<br>
+     * - Will remove all the singletons in the system, so GC will be able to destroy them
      */
     public static void exit() {
         Scheduler scheduler = new Scheduler();
@@ -124,6 +146,8 @@ public abstract class Bootstrap extends Registrar {
                 Registrar.registrars.clear();
                 $SignalsTerminator.exit();
                 ClassConstructor.singletons.clear();
+                registrationCompleted.set(false);
+                bootstrapCompleted.set(false);
                 if (killProcessOnExit) {
                     android.os.Process.killProcess(android.os.Process.myPid());
                 }

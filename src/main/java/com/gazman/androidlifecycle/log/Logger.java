@@ -9,9 +9,12 @@
 package com.gazman.androidlifecycle.log;
 
 
+import android.content.Context;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.gazman.androidlifecycle.Factory;
+import com.gazman.androidlifecycle.G;
 import com.gazman.androidlifecycle.Settings;
 
 import java.lang.reflect.InvocationTargetException;
@@ -235,5 +238,14 @@ public class Logger {
         }
         Log.d(tag, getPrefix() + " " + totalTimePass + "(" + timePass + ") " + stringBuilder);
         lastCall = currentTimeMillis;
+    }
+
+    public void toast(Object... objects){
+        toast(G.app, objects);
+    }
+
+    public void toast(Context context, Object... objects){
+        String message = join(objects, " ");
+        Toast.makeText(context, message, Toast.LENGTH_LONG).show();
     }
 }
