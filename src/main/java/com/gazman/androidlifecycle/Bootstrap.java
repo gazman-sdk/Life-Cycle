@@ -141,9 +141,11 @@ public abstract class Bootstrap extends Registrar {
         scheduler.start(new TasksCompleteSignal() {
             @Override
             public void onTasksComplete() {
-                Registrar.buildersMap.clear();
-                Registrar.classesMap.clear();
-                Registrar.registrars.clear();
+                synchronized (synObject) {
+                    Registrar.buildersMap.clear();
+                    Registrar.classesMap.clear();
+                    Registrar.registrars.clear();
+                }
                 $SignalsTerminator.exit();
                 ClassConstructor.singletons.clear();
                 registrationCompleted.set(false);

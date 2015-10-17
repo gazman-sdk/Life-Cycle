@@ -38,6 +38,13 @@ public class G extends ContextWrapper {
         super(null);
     }
 
+    @Override
+    public Object getSystemService(String name) {
+        if(getBaseContext() == null){
+            return null;
+        }
+        return super.getSystemService(name);
+    }
 
     private static boolean initialized = false;
 
