@@ -12,6 +12,7 @@ import android.content.Context;
 import android.content.ContextWrapper;
 import android.os.Build;
 import android.os.Handler;
+import android.os.HandlerThread;
 import android.os.Looper;
 import android.telephony.TelephonyManager;
 
@@ -24,17 +25,34 @@ public class G extends ContextWrapper {
 
     public static final Context app = new G();
     public static final Handler main = new Handler(Looper.getMainLooper());
+    public static final Handler IO;
     public static final int version = Build.VERSION.SDK_INT;
     private static String uuid;
 
+    static {
+        HandlerThread io = new HandlerThread("io");
+        io.start();
+        IO = new Handler(io.getLooper());
+    }
+
     public static String getDeviceUniqueID(){
         return uuid;
+    }
+    public static String getPlayStoreLink(){
+        return "https://market.android.com/details?id=" + G.app.getPackageName();
     }
 
     private G() {
         super(null);
     }
 
+    @Override
+    public Object getSystemService(String name) {
+        if(getBaseContext() == null){
+            return null;
+        }
+        return super.getSystemService(name);
+    }
 
     private static boolean initialized = false;
 

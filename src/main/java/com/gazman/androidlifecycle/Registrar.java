@@ -14,13 +14,14 @@ import java.util.HashMap;
 import java.util.LinkedList;
 
 
+@SuppressWarnings("unused")
 public abstract class Registrar {
     static HashMap<Class<?>, HashMap<String, Class<?>>> classesMap = new HashMap<>();
     static HashMap<Class<?>, Builder> buildersMap = new HashMap<>();
     // GUIDE value
     public static final String DEFAULT_FAMILY = "de9502c7-a41a-4fdb-9d42-249b94fbeaa9";
 
-    static LinkedList<Registrar> registrars = new LinkedList<Registrar>();
+    static LinkedList<Registrar> registrars = new LinkedList<>();
 
     /**
      * Will call {@link #registerClass(Class, Class, String)} with <br>
@@ -71,7 +72,7 @@ public abstract class Registrar {
         while (superclass != topClaz) {
             HashMap<String, Class<?>> hashMap = classesMap.get(superclass);
             if (hashMap == null) {
-                hashMap = new HashMap<String, Class<?>>();
+                hashMap = new HashMap<>();
                 classesMap.put(superclass, hashMap);
             }
             hashMap.put(family, claz);

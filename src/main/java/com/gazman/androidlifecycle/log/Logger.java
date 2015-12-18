@@ -9,8 +9,12 @@
 package com.gazman.androidlifecycle.log;
 
 
+import android.content.Context;
 import android.util.Log;
+import android.widget.Toast;
 
+import com.gazman.androidlifecycle.Factory;
+import com.gazman.androidlifecycle.G;
 import com.gazman.androidlifecycle.Settings;
 
 import java.lang.reflect.InvocationTargetException;
@@ -22,28 +26,32 @@ import java.util.concurrent.atomic.AtomicInteger;
  */
 public class Logger {
 
+    public static final String DEFAULT_TAG = "App";
+
     private static final AtomicInteger id = new AtomicInteger();
-    private String tag;
+    private String tag = DEFAULT_TAG;
     private String uniqueID = Integer.toString(id.incrementAndGet());
     private String prefix = "";
     private String suffix = "";
     private long startingTime = System.currentTimeMillis();
     private long lastCall = System.currentTimeMillis();
+    private static String masterPrefix;
 
     /**
-     * Created new logger with tag of class simple name
-     * @param tag the class simple name tag to use
+     * Creates logger using Factory and call the protected method init(tag);
      */
-    public Logger(Class tag) {
-        this(tag.getSimpleName());
+    public static Logger create(String tag){
+        Logger logger = Factory.inject(Logger.class);
+        logger.init(tag);
+        return logger;
     }
 
-    /**
-     * Creates new Logger with tag
-     * @param tag The tag to use
-     */
-    public Logger(String tag) {
+    protected void init(String tag){
         this.tag = tag;
+    }
+
+    public static void setMasterPrefix(String masterPrefix){
+        Logger.masterPrefix = masterPrefix;
     }
 
     protected String getClassAndMethodNames(int dept) {
@@ -70,6 +78,9 @@ public class Logger {
      * @return log prefix
      */
     public String getPrefix() {
+        if(masterPrefix != null){
+            return masterPrefix + " " + uniqueID + "." + prefix;
+        }
         return uniqueID + "." + prefix;
     }
 
@@ -162,7 +173,6 @@ public class Logger {
     }
 
     private void print(String methodName, Throwable throwable, Object[] parameters) {
-        String prefix = getPrefix();
         setPrefix((prefix.length() > 0 ? prefix : "") + " " + getClassAndMethodNames(3) + " ");
         try {
             Method method;
@@ -171,7 +181,7 @@ public class Logger {
             } else {
                 method = Log.class.getMethod(methodName, String.class, String.class);
             }
-            String message = getPrefix() + toString(parameters);
+            String message = getPrefix() + join(parameters, " ");
             if (message.length() > 4000) {
                 int chunkCount = message.length() / 4000;     // integer division
                 for (int i = 0; i <= chunkCount; i++) {
@@ -204,7 +214,7 @@ public class Logger {
         }
     }
 
-    private String toString(Object[] parameters) {
+    public static String join(Object[] parameters, String delimiter) {
         StringBuilder stringBuilder = new StringBuilder();
         for (Object object : parameters) {
             if (object != null) {
@@ -212,7 +222,7 @@ public class Logger {
             } else {
                 stringBuilder.append("null");
             }
-            stringBuilder.append(" ");
+            stringBuilder.append(delimiter);
         }
 
         return stringBuilder.toString();
@@ -228,5 +238,14 @@ public class Logger {
         }
         Log.d(tag, getPrefix() + " " + totalTimePass + "(" + timePass + ") " + stringBuilder);
         lastCall = currentTimeMillis;
+    }
+
+    public void toast(Object... objects){
+        toast(G.app, objects);
+    }
+
+    public void toast(Context context, Object... objects){
+        String message = join(objects, " ");
+        Toast.makeText(context, message, Toast.LENGTH_LONG).show();
     }
 }
