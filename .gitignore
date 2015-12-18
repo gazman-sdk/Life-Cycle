@@ -1,5 +1,7 @@
-.idea
-### Android template
+.idea/
+*.iml
+
+
 # Built application files
 *.apk
 *.ap_
@@ -27,5 +29,3 @@ proguard/
 
 # Log Files
 *.log
-
-
