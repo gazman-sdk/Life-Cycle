@@ -108,6 +108,7 @@ public final class Signal<T> {
         validateListener(listener);
         synchronized (synObject) {
             listeners.remove(listener);
+            listenersTMP.remove(listener);
             oneTimeListeners.remove(listener);
         }
     }
@@ -120,6 +121,7 @@ public final class Signal<T> {
         validateListener(listener);
         synchronized (synObject) {
             classListeners.remove(listener);
+            classListenersTMP.remove(listener);
             //noinspection SuspiciousMethodCalls
             oneTimeClassListeners.remove(listener);
         }

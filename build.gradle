@@ -21,6 +21,9 @@ android {
     lintOptions {
         abortOnError false
     }
+    dexOptions {
+        incremental true
+    }
 }
 dependencies {
 }
