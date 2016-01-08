@@ -32,6 +32,7 @@ public final class Signal<T> {
     private final LinkedList<Class<? extends T>> classListenersTMP = new LinkedList<>();
     private final LinkedList<T> oneTimeListeners = new LinkedList<>();
     private final LinkedList<Class<? extends T>> oneTimeClassListeners = new LinkedList<>();
+    private boolean hasListeners;
 
     Signal(Class<T> type) {
         originalType = type;
@@ -89,6 +90,7 @@ public final class Signal<T> {
         validateListener(listener);
         synchronized (synObject) {
             if (!list.contains(listener)) {
+                hasListeners = true;
                 list.add(listener);
             }
         }
@@ -110,6 +112,7 @@ public final class Signal<T> {
             listeners.remove(listener);
             listenersTMP.remove(listener);
             oneTimeListeners.remove(listener);
+            updateHasListeners();
         }
     }
 
@@ -124,7 +127,12 @@ public final class Signal<T> {
             classListenersTMP.remove(listener);
             //noinspection SuspiciousMethodCalls
             oneTimeClassListeners.remove(listener);
+            updateHasListeners();
         }
+    }
+
+    private void updateHasListeners() {
+        hasListeners = 0 < classListeners.size() + oneTimeClassListeners.size() + listeners.size() + oneTimeListeners.size();
     }
 
     void invoke(Method method, Object[] args) {
@@ -174,6 +182,7 @@ public final class Signal<T> {
             listener = Factory.inject(classListener);
             invoke(method, args, listener);
         }
+        updateHasListeners();
     }
 
     private void invoke(Method method, Object[] args, Object listener) {
@@ -187,5 +196,9 @@ public final class Signal<T> {
                 UnhandledExceptionHandler.callback.onApplicationError(e);
             }
         }
+    }
+
+    public boolean hasListeners() {
+        return hasListeners;
     }
 }

@@ -36,6 +36,7 @@ public class Logger {
     private long startingTime = System.currentTimeMillis();
     private long lastCall = System.currentTimeMillis();
     private static String masterPrefix;
+    private boolean disabled;
 
     /**
      * Creates logger using Factory and call the protected method init(tag);
@@ -173,6 +174,9 @@ public class Logger {
     }
 
     private void print(String methodName, Throwable throwable, Object[] parameters) {
+        if(disabled){
+            return;
+        }
         setPrefix((prefix.length() > 0 ? prefix : "") + " " + getClassAndMethodNames(3) + " ");
         try {
             Method method;
@@ -229,6 +233,9 @@ public class Logger {
     }
 
     public void log(Object... objects) {
+        if(disabled){
+            return;
+        }
         long currentTimeMillis = System.currentTimeMillis();
         long totalTimePass = currentTimeMillis - startingTime;
         long timePass = currentTimeMillis - lastCall;
@@ -247,5 +254,9 @@ public class Logger {
     public void toast(Context context, Object... objects){
         String message = join(objects, " ");
         Toast.makeText(context, message, Toast.LENGTH_LONG).show();
+    }
+
+    public void disable() {
+        disabled = true;
     }
 }
