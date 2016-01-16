@@ -36,7 +36,7 @@ public class Logger {
     private long startingTime = System.currentTimeMillis();
     private long lastCall = System.currentTimeMillis();
     private static String masterPrefix;
-    private boolean disabled;
+    private boolean enable;
 
     /**
      * Creates logger using Factory and call the protected method init(tag);
@@ -174,7 +174,7 @@ public class Logger {
     }
 
     private void print(String methodName, Throwable throwable, Object[] parameters) {
-        if(disabled){
+        if(enable){
             return;
         }
         setPrefix((prefix.length() > 0 ? prefix : "") + " " + getClassAndMethodNames(3) + " ");
@@ -233,7 +233,7 @@ public class Logger {
     }
 
     public void log(Object... objects) {
-        if(disabled){
+        if(enable){
             return;
         }
         long currentTimeMillis = System.currentTimeMillis();
@@ -256,7 +256,11 @@ public class Logger {
         Toast.makeText(context, message, Toast.LENGTH_LONG).show();
     }
 
-    public void disable() {
-        disabled = true;
+    public void setEnable(boolean enable) {
+        this.enable = enable;
+    }
+
+    public boolean isEnable() {
+        return enable;
     }
 }
