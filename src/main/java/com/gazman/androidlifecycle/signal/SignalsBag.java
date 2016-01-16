@@ -8,6 +8,11 @@
 // =================================================================================================
 package com.gazman.androidlifecycle.signal;
 
+import com.gazman.androidlifecycle.log.Logger;
+
+import java.lang.reflect.InvocationHandler;
+import java.lang.reflect.Method;
+import java.lang.reflect.Proxy;
 import java.util.HashMap;
 
 /**
@@ -42,6 +47,20 @@ public final class SignalsBag {
     public static <T> Signal<T> create(Class<T> type) {
         //noinspection unchecked
         return new Signal(type);
+    }
+
+    public static <T> T log(Class<T> tClass, final String tag){
+        //noinspection unchecked
+        return (T) Proxy.newProxyInstance(tClass.getClassLoader(), new Class[]{tClass}, new InvocationHandler() {
+
+            private Logger logger = Logger.create(tag);
+
+            @Override
+            public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
+                logger.log(method.getName(), args);
+                return null;
+            }
+        });
     }
 
 }

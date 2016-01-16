@@ -241,7 +241,12 @@ public class Logger {
         long timePass = currentTimeMillis - lastCall;
         StringBuilder stringBuilder = new StringBuilder();
         for (Object object : objects) {
-            stringBuilder.append(object).append(" ");
+            if(object instanceof Object[]){
+                stringBuilder.append(join((Object[]) object, " "));
+            }
+            else {
+                stringBuilder.append(object).append(" ");
+            }
         }
         Log.d(tag, getPrefix() + " " + totalTimePass + "(" + timePass + ") " + stringBuilder);
         lastCall = currentTimeMillis;
