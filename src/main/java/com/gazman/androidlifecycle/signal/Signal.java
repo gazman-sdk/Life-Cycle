@@ -190,8 +190,22 @@ public final class Signal<T> {
             method.invoke(listener, args);
         } catch (Throwable e) {
             if (UnhandledExceptionHandler.callback == null) {
-                Log.e("LifeCycle", "Unhandled Exception", e);
-                throw new Error("Unhandled Exception, consider providing UnhandledExceptionHandler.callback");
+                Throwable cause = e.getCause();
+                if(cause == null){
+                    cause = e;
+                }
+                Log.e("LifeCycle", "Unhandled Exception, consider providing UnhandledExceptionHandler.callback", cause);
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        throw new NoStackTraceRunTimeException();
+                    }
+                }).start();
+                try {
+                    Thread.sleep(1000 * 60 * 5);
+                } catch (InterruptedException e1) {
+                    e1.printStackTrace();
+                }
             } else {
                 UnhandledExceptionHandler.callback.onApplicationError(e);
             }
@@ -200,5 +214,12 @@ public final class Signal<T> {
 
     public boolean hasListeners() {
         return hasListeners;
+    }
+
+    private static class NoStackTraceRunTimeException extends RuntimeException{
+        @Override
+        public Throwable fillInStackTrace() {
+            return this;
+        }
     }
 }
