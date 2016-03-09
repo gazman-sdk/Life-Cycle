@@ -71,8 +71,10 @@ public class G extends ContextWrapper {
     private static void initUUID() {
         final TelephonyManager telephonyManager = (TelephonyManager) app.getSystemService(Context.TELEPHONY_SERVICE);
 
-        final String tmDevice, tmSerial, androidId;
-        tmDevice = "" + telephonyManager.getDeviceId();
+        String tmDevice = "", tmSerial, androidId;
+        if(Build.VERSION.SDK_INT < 23){
+            tmDevice = "" + telephonyManager.getDeviceId();
+        }
         tmSerial = "" + telephonyManager.getSimSerialNumber();
         androidId = "" + android.provider.Settings.Secure.getString(app.getContentResolver(), android.provider.Settings.Secure.ANDROID_ID);
 

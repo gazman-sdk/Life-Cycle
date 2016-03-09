@@ -57,7 +57,7 @@ public final class SignalsBag {
 
             @Override
             public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
-                logger.log(method.getName(), args);
+                logger.d(method.getName(), args);
                 return null;
             }
         });
