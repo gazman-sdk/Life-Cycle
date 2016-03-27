@@ -148,7 +148,7 @@ public class SignalsHelper {
     /**
      * Will call to SignalsBag.inject(signal).removeListener(listener)
      */
-    public <T> void removeListener(Class<T> type, Class<T> listener) {
+    public <T> void removeListener(Class<T> type, final Class<? extends T> listener) {
         final Signal<T> signal = SignalsBag.inject(type);
         if (listener.isAssignableFrom(SingleTon.class)) {
             signal.removeListener(Factory.inject(listener));

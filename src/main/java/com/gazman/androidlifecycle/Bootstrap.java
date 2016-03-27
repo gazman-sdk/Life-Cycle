@@ -135,12 +135,14 @@ public abstract class Bootstrap extends Registrar {
      * - Will unregister all the signals in the system<br>
      * - Will remove all the singletons in the system, so GC will be able to destroy them
      */
-    public static void exit() {
+    public static void exit(final Runnable callback) {
         Scheduler scheduler = new Scheduler();
         SignalsBag.inject(DisposableSignal.class).dispatcher.onDispose(scheduler);
         scheduler.start(new TasksCompleteSignal() {
             @Override
             public void onTasksComplete() {
+                G.IO.removeCallbacksAndMessages(null);
+                G.main.removeCallbacksAndMessages(null);
                 synchronized (synObject) {
                     Registrar.buildersMap.clear();
                     Registrar.classesMap.clear();
@@ -150,7 +152,11 @@ public abstract class Bootstrap extends Registrar {
                 ClassConstructor.singletons.clear();
                 registrationCompleted.set(false);
                 bootstrapCompleted.set(false);
+
                 if (killProcessOnExit) {
+                    if(callback != null){
+                        callback.run();
+                    }
                     android.os.Process.killProcess(android.os.Process.myPid());
                 }
             }
