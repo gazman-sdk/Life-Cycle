@@ -50,7 +50,7 @@ public abstract class Bootstrap extends Registrar {
     }
 
     public Bootstrap(Context context) {
-        G.setApp(context);
+        G.init(context);
     }
 
     /**

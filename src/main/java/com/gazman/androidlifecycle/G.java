@@ -54,7 +54,7 @@ public class G extends ContextWrapper {
 
     private static boolean initialized = false;
 
-    static void setApp(Context context) {
+    public static void init(Context context) {
         if (initialized) {
             return;
         }
