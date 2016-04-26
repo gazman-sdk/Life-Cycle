@@ -7,19 +7,23 @@ public class LogSettings {
     private boolean enabled;
     private boolean printMethodName;
     private boolean printTime;
-    private String prefix;
+    private String appPrefix;
     private String suffix;
     private String delimiter;
     private String prefixDelimiter;
+    private boolean showPid;
+    private int minTagLength;
 
     public void init(){
         setEnabled(true);
         setPrefixDelimiter("|");
         setDelimiter(" ");
-        setPrefix("");
+        setAppPrefix("~");
         setPrintMethodName(false);
-        setPrintTime(false);
+        setPrintTime(true);
         setSuffix("");
+        setShowPid(true);
+        setMinTagLength(18);
     }
 
     public void setDelimiter(String delimiter) {
@@ -54,12 +58,12 @@ public class LogSettings {
         this.enabled = enabled;
     }
 
-    public String getPrefix() {
-        return prefix;
+    public String getAppPrefix() {
+        return appPrefix;
     }
 
-    public void setPrefix(String prefix) {
-        this.prefix = prefix;
+    public void setAppPrefix(String appPrefix) {
+        this.appPrefix = appPrefix;
     }
 
     public String getSuffix() {
@@ -76,5 +80,21 @@ public class LogSettings {
 
     public void setPrefixDelimiter(String prefixDelimiter) {
         this.prefixDelimiter = prefixDelimiter;
+    }
+
+    public boolean isShowPid() {
+        return showPid;
+    }
+
+    public void setShowPid(boolean showPid) {
+        this.showPid = showPid;
+    }
+
+    public int getMinTagLength() {
+        return minTagLength;
+    }
+
+    public void setMinTagLength(int minTagLength) {
+        this.minTagLength = minTagLength;
     }
 }

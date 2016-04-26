@@ -10,6 +10,7 @@ package com.gazman.androidlifecycle.log;
 
 
 import android.content.Context;
+import android.os.Process;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -18,6 +19,7 @@ import com.gazman.androidlifecycle.G;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.text.DecimalFormat;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
@@ -28,28 +30,34 @@ public class Logger {
 
     private static final AtomicInteger id = new AtomicInteger();
     private String tag;
-    private String uniqueID = Integer.toString(id.incrementAndGet());
-    private long startingTime = System.currentTimeMillis();
-    private long lastCall = System.currentTimeMillis();
+    private static long startingTime = System.currentTimeMillis();
+    //    private long lastCall = System.currentTimeMillis();
     private LogSettings localSettings;
+    private DecimalFormat timeFormat = new DecimalFormat("00.000");
+    private DecimalFormat idFormat = new DecimalFormat("00");
+    private String uniqueID = idFormat.format(id.incrementAndGet());
 
     /**
      * Creates logger using Factory and call the protected method init(tag);
      */
-    public static Logger create(String tag){
+    public static Logger create(String tag) {
         Logger logger = Factory.inject(Logger.class);
         logger.init(tag);
         return logger;
     }
 
-    protected void init(String tag){
-        this.tag = tag;
+    protected void init(String tag) {
         localSettings = Factory.inject(LogSettings.class);
         localSettings.init();
+        setTag(tag);
     }
 
     public void setTag(String tag) {
-        this.tag = tag;
+        String extra = "";
+        for (int i = 0; i < localSettings.getMinTagLength() - tag.length(); i++) {
+            extra += "_";
+        }
+        this.tag = tag + extra;
     }
 
     public LogSettings getSettings() {
@@ -57,7 +65,7 @@ public class Logger {
     }
 
     protected String getClassAndMethodNames(int dept) {
-        if(!localSettings.isPrintMethodName()){
+        if (!localSettings.isPrintMethodName()) {
             return "";
         }
         StackTraceElement stackTraceElement = new Exception().getStackTrace()[dept];
@@ -69,6 +77,7 @@ public class Logger {
 
     /**
      * Default log
+     *
      * @param parameters Will concat those parameters using toString method
      *                   separated by space char.
      */
@@ -78,9 +87,10 @@ public class Logger {
 
     /**
      * Default log
+     *
      * @param parameters Will concat those parameters using toString method
      *                   separated by space char.
-     * @param throwable Will print stack trace of this throwable
+     * @param throwable  Will print stack trace of this throwable
      */
     public void d(Throwable throwable, Object... parameters) {
         print("d", throwable, parameters);
@@ -88,6 +98,7 @@ public class Logger {
 
     /**
      * Default log
+     *
      * @param parameters Will concat those parameters using toString method
      *                   separated by space char.
      */
@@ -97,9 +108,10 @@ public class Logger {
 
     /**
      * Default log
+     *
      * @param parameters Will concat those parameters using toString method
      *                   separated by space char.
-     * @param throwable Will print stack trace of this throwable
+     * @param throwable  Will print stack trace of this throwable
      */
     public void i(Throwable throwable, Object... parameters) {
         print("i", throwable, parameters);
@@ -107,6 +119,7 @@ public class Logger {
 
     /**
      * Warning log
+     *
      * @param parameters Will concat those parameters using toString method
      *                   separated by space char.
      */
@@ -116,9 +129,10 @@ public class Logger {
 
     /**
      * Warning log
+     *
      * @param parameters Will concat those parameters using toString method
      *                   separated by space char.
-     * @param throwable Will print stack trace of this throwable
+     * @param throwable  Will print stack trace of this throwable
      */
     public void w(Throwable throwable, Object... parameters) {
         print("w", throwable, parameters);
@@ -126,6 +140,7 @@ public class Logger {
 
     /**
      * Exception log
+     *
      * @param parameters Will concat those parameters using toString method
      *                   separated by space char.
      */
@@ -135,16 +150,17 @@ public class Logger {
 
     /**
      * Exception log
+     *
      * @param parameters Will concat those parameters using toString method
      *                   separated by space char.
-     * @param throwable Will print stack trace of this throwable
+     * @param throwable  Will print stack trace of this throwable
      */
     public void e(Throwable throwable, Object... parameters) {
         print("e", throwable, parameters);
     }
 
     private void print(String methodName, Throwable throwable, Object[] parameters) {
-        if(!localSettings.isEnabled()){
+        if (!localSettings.isEnabled()) {
             return;
         }
 
@@ -167,26 +183,37 @@ public class Logger {
 
     private String getPrefix() {
         String methodPrefix = getClassAndMethodNames(5);
+        String processID = getProcessId();
         String timePrefix = getTimePrefix();
         return join(
                 localSettings.getPrefixDelimiter(),
+                localSettings.getAppPrefix(),
+                processID,
                 uniqueID,
                 timePrefix,
-                methodPrefix,
-                localSettings.getPrefix());
+                methodPrefix
+        );
+    }
+
+    private String getProcessId() {
+        if (!localSettings.isShowPid()) {
+            return "";
+        }
+        long id = Process.myPid();
+        return id + "";
     }
 
     private void printMessage(Throwable throwable, Method method, String message)
             throws IllegalAccessException,
             InvocationTargetException {
         if (message.length() > 4000) {
-            printChunkedMessage(throwable, method, message);
+            printChuckedMessage(throwable, method, message);
         } else {
             invoke(throwable, method, message);
         }
     }
 
-    private void printChunkedMessage(Throwable throwable, Method method, String message) throws IllegalAccessException, InvocationTargetException {
+    private void printChuckedMessage(Throwable throwable, Method method, String message) throws IllegalAccessException, InvocationTargetException {
         int chunkCount = message.length() / 4000;     // integer division
         for (int i = 0; i <= chunkCount; i++) {
             int max = 4000 * (i + 1);
@@ -208,7 +235,7 @@ public class Logger {
         }
     }
 
-    public static String join(String delimiter, Object...parameters) {
+    public static String join(String delimiter, Object... parameters) {
         return join(parameters, delimiter);
     }
 
@@ -217,7 +244,7 @@ public class Logger {
         for (Object object : parameters) {
             String objectString = object != null ? object.toString() : "null";
             stringBuilder.append(objectString);
-            if(objectString.length() > 0){
+            if (objectString.length() > 0) {
                 stringBuilder.append(delimiter);
             }
         }
@@ -226,23 +253,21 @@ public class Logger {
     }
 
     public String getTimePrefix() {
-        if(!localSettings.isPrintTime()){
+        if (!localSettings.isPrintTime()) {
             return "";
         }
         long currentTimeMillis = System.currentTimeMillis();
-        long totalTimePass = currentTimeMillis - startingTime;
-        long timePass = currentTimeMillis - lastCall;
-        lastCall = currentTimeMillis;
+        double totalTimePass = (currentTimeMillis - startingTime) / 1000d;
 
-        return totalTimePass + "(" + timePass + ")";
+        return timeFormat.format(totalTimePass);
     }
 
-    public void toast(Object... objects){
+    public void toast(Object... objects) {
         toast(G.app, objects);
     }
 
-    public void toast(Context context, Object... objects){
-        if(!localSettings.isEnabled()){
+    public void toast(Context context, Object... objects) {
+        if (!localSettings.isEnabled()) {
             return;
         }
         String message = join(objects, localSettings.getDelimiter());
