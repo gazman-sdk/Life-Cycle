@@ -153,10 +153,10 @@ public abstract class Bootstrap extends Registrar {
                 registrationCompleted.set(false);
                 bootstrapCompleted.set(false);
 
+                if (callback != null) {
+                    callback.run();
+                }
                 if (killProcessOnExit) {
-                    if(callback != null){
-                        callback.run();
-                    }
                     android.os.Process.killProcess(android.os.Process.myPid());
                 }
             }
