@@ -21,6 +21,37 @@ public class SignalsHelper {
     private ArrayList<Runnable> removables = new ArrayList<>();
 
 
+    private Runnable registerCallback;
+    private boolean registered;
+
+    public void setRegisterCallback(Runnable registerCallback) {
+        this.registerCallback = registerCallback;
+    }
+
+    /**
+     * A helper method to manage the registration processes
+     * It simply make sure to not call the registerCallback more than once per register
+     *
+     * @return if the registration made
+     */
+    public boolean register(){
+        if(registered){
+            return false;
+        }
+        registered = true;
+        registerCallback.run();
+        return true;
+    }
+
+    /**
+     * Change the state to unregister and call to removeAll(), it does not removes the registerCallback
+     * to removeIt call setRegisterCallback(null), how ever most of the time it's not really necessary...
+     */
+    public void unregister(){
+        registered = false;
+    }
+
+
     /**
      * Will call to signal.addListener(listener)
      */
