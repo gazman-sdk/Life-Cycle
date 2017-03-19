@@ -8,10 +8,9 @@
 // =================================================================================================
 package com.gazman.androidlifecycle.signal;
 
-import android.util.Log;
-
 import com.gazman.androidlifecycle.Factory;
-import com.gazman.androidlifecycle.utils.UnhandledExceptionHandler;
+import com.gazman.androidlifecycle.signal.invoker.DefaultInvoker;
+import com.gazman.androidlifecycle.signal.invoker.Invoker;
 
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
@@ -32,6 +31,13 @@ public final class Signal<T> {
     private final LinkedList<Class<? extends T>> classListenersTMP = new LinkedList<>();
     private final LinkedList<T> oneTimeListeners = new LinkedList<>();
     private final LinkedList<Class<? extends T>> oneTimeClassListeners = new LinkedList<>();
+    private boolean hasListeners;
+    private static final Invoker DEFAULT_INVOKER = new DefaultInvoker();
+    private Invoker invoker = DEFAULT_INVOKER;
+
+    public void setInvoker(Invoker invoker) {
+        this.invoker = invoker;
+    }
 
     Signal(Class<T> type) {
         originalType = type;
@@ -89,6 +95,7 @@ public final class Signal<T> {
         validateListener(listener);
         synchronized (synObject) {
             if (!list.contains(listener)) {
+                hasListeners = true;
                 list.add(listener);
             }
         }
@@ -108,7 +115,9 @@ public final class Signal<T> {
         validateListener(listener);
         synchronized (synObject) {
             listeners.remove(listener);
+            listenersTMP.remove(listener);
             oneTimeListeners.remove(listener);
+            updateHasListeners();
         }
     }
 
@@ -120,22 +129,32 @@ public final class Signal<T> {
         validateListener(listener);
         synchronized (synObject) {
             classListeners.remove(listener);
+            classListenersTMP.remove(listener);
             //noinspection SuspiciousMethodCalls
             oneTimeClassListeners.remove(listener);
+            updateHasListeners();
         }
+    }
+
+    private void updateHasListeners() {
+        hasListeners = 0 < classListeners.size() + oneTimeClassListeners.size() + listeners.size() + oneTimeListeners.size();
     }
 
     void invoke(Method method, Object[] args) {
         Class<? extends T> classListener;
-        T listener;
+        T listener = null;
 
         if(listeners.size() > 0){
             while (listeners.size() > 0) {
                 synchronized (synObject) {
-                    listener = listeners.removeFirst();
+                    if(listeners.size() > 0) {
+                        listener = listeners.removeFirst();
+                    }
                 }
-                listenersTMP.add(listener);
-                invoke(method, args, listener);
+                if(listener != null) {
+                    listenersTMP.add(listener);
+                    invoker.invoke(method, args, listener);
+                }
             }
             synchronized (synObject){
                 listeners.addAll(listenersTMP);
@@ -147,7 +166,7 @@ public final class Signal<T> {
             synchronized (synObject) {
                 listener = oneTimeListeners.removeFirst();
             }
-            invoke(method, args, listener);
+            invoker.invoke(method, args, listener);
         }
 
         if(classListeners.size() > 0){
@@ -157,7 +176,7 @@ public final class Signal<T> {
                 }
                 classListenersTMP.add(classListener);
                 listener = Factory.inject(classListener);
-                invoke(method, args, listener);
+                invoker.invoke(method, args, listener);
             }
             synchronized (synObject){
                 classListeners.addAll(classListenersTMP);
@@ -170,20 +189,21 @@ public final class Signal<T> {
                 classListener = oneTimeClassListeners.removeFirst();
             }
             listener = Factory.inject(classListener);
-            invoke(method, args, listener);
+            invoker.invoke(method, args, listener);
         }
+        updateHasListeners();
     }
 
-    private void invoke(Method method, Object[] args, Object listener) {
-        try {
-            method.invoke(listener, args);
-        } catch (Throwable e) {
-            if (UnhandledExceptionHandler.callback == null) {
-                Log.e("LifeCycle", "Unhandled Exception", e);
-                throw new Error("Unhandled Exception, consider providing UnhandledExceptionHandler.callback");
-            } else {
-                UnhandledExceptionHandler.callback.onApplicationError(e);
-            }
+
+
+    public boolean hasListeners() {
+        return hasListeners;
+    }
+
+    private static class NoStackTraceRunTimeException extends RuntimeException{
+        @Override
+        public Throwable fillInStackTrace() {
+            return this;
         }
     }
 }

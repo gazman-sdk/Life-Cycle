@@ -25,7 +25,7 @@ public class SchedulerCallback {
                 if (count.decrementAndGet() <= 0) {
                     callback.run();
                 }
-                logger.log("Completed", method.getName(), count);
+                logger.d("Completed", method.getName(), count);
                 return null;
             }
         };

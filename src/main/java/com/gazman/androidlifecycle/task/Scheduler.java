@@ -43,7 +43,7 @@ public class Scheduler {
      * @return this Scheduler
      */
     public Scheduler setLogTag(String tag) {
-        logger.setPrefix(tag);
+        logger.setTag(tag);
         return this;
     }
 
@@ -178,7 +178,7 @@ public class Scheduler {
             stringBuilder.append("\n - ");
             stringBuilder.append(signal.originalType.getSimpleName());
         }
-        logger.log("Starting with", stringBuilder);
+        logger.d("Starting with", stringBuilder);
     }
 
     private Class<?>[] buildCallBack(ArrayList<Signal> signals) {

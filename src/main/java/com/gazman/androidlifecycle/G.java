@@ -14,9 +14,7 @@ import android.os.Build;
 import android.os.Handler;
 import android.os.HandlerThread;
 import android.os.Looper;
-import android.telephony.TelephonyManager;
-
-import java.util.UUID;
+import android.provider.Settings;
 
 /**
  * A ContextWrapper for application context
@@ -56,7 +54,7 @@ public class G extends ContextWrapper {
 
     private static boolean initialized = false;
 
-    static void setApp(Context context) {
+    public static void init(Context context) {
         if (initialized) {
             return;
         }
@@ -69,14 +67,9 @@ public class G extends ContextWrapper {
      * Credits to joe - http://stackoverflow.com/a/2853253/1129332
      */
     private static void initUUID() {
-        final TelephonyManager telephonyManager = (TelephonyManager) app.getSystemService(Context.TELEPHONY_SERVICE);
-
-        final String tmDevice, tmSerial, androidId;
-        tmDevice = "" + telephonyManager.getDeviceId();
-        tmSerial = "" + telephonyManager.getSimSerialNumber();
-        androidId = "" + android.provider.Settings.Secure.getString(app.getContentResolver(), android.provider.Settings.Secure.ANDROID_ID);
-
-        UUID deviceUuid = new UUID(androidId.hashCode(), ((long)tmDevice.hashCode() << 32) | tmSerial.hashCode());
-        uuid = deviceUuid.toString();
+        try {
+            uuid = Settings.Secure.getString(app.getContentResolver(), Settings.Secure.ANDROID_ID);
+        }
+        catch (Exception ignore){}
     }
 }

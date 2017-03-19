@@ -21,6 +21,41 @@ public class SignalsHelper {
     private ArrayList<Runnable> removables = new ArrayList<>();
 
 
+    private Runnable registerCallback;
+    private boolean registered;
+
+    public void setRegisterCallback(Runnable registerCallback) {
+        this.registerCallback = registerCallback;
+    }
+
+    /**
+     * A helper method to manage the registration processes
+     * It simply make sure to not call the registerCallback more than once per register
+     *
+     * @return if the registration made
+     */
+    public boolean register(){
+        if(registered){
+            return false;
+        }
+        registered = true;
+        registerCallback.run();
+        return true;
+    }
+
+    public boolean isRegistered() {
+        return registered;
+    }
+
+    /**
+     * Change the state to unregister and call to removeAll(), it does not removes the registerCallback
+     * to removeIt call setRegisterCallback(null), how ever most of the time it's not really necessary...
+     */
+    public void unregister(){
+        registered = false;
+    }
+
+
     /**
      * Will call to signal.addListener(listener)
      */
@@ -148,7 +183,7 @@ public class SignalsHelper {
     /**
      * Will call to SignalsBag.inject(signal).removeListener(listener)
      */
-    public <T> void removeListener(Class<T> type, Class<T> listener) {
+    public <T> void removeListener(Class<T> type, final Class<? extends T> listener) {
         final Signal<T> signal = SignalsBag.inject(type);
         if (listener.isAssignableFrom(SingleTon.class)) {
             signal.removeListener(Factory.inject(listener));
