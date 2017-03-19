@@ -142,15 +142,19 @@ public final class Signal<T> {
 
     void invoke(Method method, Object[] args) {
         Class<? extends T> classListener;
-        T listener;
+        T listener = null;
 
         if(listeners.size() > 0){
             while (listeners.size() > 0) {
                 synchronized (synObject) {
-                    listener = listeners.removeFirst();
+                    if(listeners.size() > 0) {
+                        listener = listeners.removeFirst();
+                    }
                 }
-                listenersTMP.add(listener);
-                invoker.invoke(method, args, listener);
+                if(listener != null) {
+                    listenersTMP.add(listener);
+                    invoker.invoke(method, args, listener);
+                }
             }
             synchronized (synObject){
                 listeners.addAll(listenersTMP);

@@ -17,9 +17,11 @@ import android.widget.Toast;
 import com.gazman.androidlifecycle.Factory;
 import com.gazman.androidlifecycle.G;
 
+import java.lang.reflect.Array;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.text.DecimalFormat;
+import java.util.Arrays;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
@@ -242,7 +244,7 @@ public class Logger {
     public static String join(Object[] parameters, String delimiter) {
         StringBuilder stringBuilder = new StringBuilder();
         for (Object object : parameters) {
-            String objectString = object != null ? object.toString() : "null";
+            String objectString = extractObject(object);
             stringBuilder.append(objectString);
             if (objectString.length() > 0) {
                 stringBuilder.append(delimiter);
@@ -250,6 +252,20 @@ public class Logger {
         }
 
         return stringBuilder.toString();
+    }
+
+    private static String extractObject(Object object) {
+        if(object == null){
+            return "null";
+        }
+        if(object.getClass().isArray()){
+            int length = Array.getLength(object);
+            Object[] objects = new Object[length];
+            //noinspection SuspiciousSystemArraycopy
+            System.arraycopy(object, 0, objects, 0, length);
+            return "[" + join(objects, ",") + "]";
+        }
+        return object.toString();
     }
 
     public String getTimePrefix() {

@@ -43,6 +43,10 @@ public class SignalsHelper {
         return true;
     }
 
+    public boolean isRegistered() {
+        return registered;
+    }
+
     /**
      * Change the state to unregister and call to removeAll(), it does not removes the registerCallback
      * to removeIt call setRegisterCallback(null), how ever most of the time it's not really necessary...
