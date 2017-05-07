@@ -8,6 +8,7 @@
 // =================================================================================================
 package com.gazman.androidlifecycle;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.ContextWrapper;
 import android.os.Build;
@@ -33,10 +34,16 @@ public class G extends ContextWrapper {
         IO = new Handler(io.getLooper());
     }
 
-    public static String getDeviceUniqueID(){
-        return uuid;
+    @SuppressLint("HardwareIds")
+    public static String getDeviceUniqueIDForFraudUsage() {
+        try {
+            return Settings.Secure.getString(app.getContentResolver(), Settings.Secure.ANDROID_ID);
+        } catch (Exception ignore) {
+        }
+        return null;
     }
-    public static String getPlayStoreLink(){
+
+    public static String getPlayStoreLink() {
         return "https://market.android.com/details?id=" + G.app.getPackageName();
     }
 
@@ -46,7 +53,7 @@ public class G extends ContextWrapper {
 
     @Override
     public Object getSystemService(String name) {
-        if(getBaseContext() == null){
+        if (getBaseContext() == null) {
             return null;
         }
         return super.getSystemService(name);
@@ -60,16 +67,5 @@ public class G extends ContextWrapper {
         }
         initialized = true;
         ((G) app).attachBaseContext(context.getApplicationContext());
-        initUUID();
-    }
-
-    /**
-     * Credits to joe - http://stackoverflow.com/a/2853253/1129332
-     */
-    private static void initUUID() {
-        try {
-            uuid = Settings.Secure.getString(app.getContentResolver(), Settings.Secure.ANDROID_ID);
-        }
-        catch (Exception ignore){}
     }
 }
