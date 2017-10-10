@@ -17,9 +17,13 @@ And much more ;)
 Usage
 -----
 
+In build.gradle file replace BuildToolsVersion with your tools version
+
 Read [wiki](https://github.com/Ilya-Gazman/android_life_cycle/wiki) or watch [slid show](https://docs.google.com/presentation/d/181WIzXmmO7e16gPUp_sV2lsfFfhR2z8mh2VsDcotBNU/pub?start=false&loop=false&delayms=3000).
 
 * *for now slide show covers more topics than wiki.*
+
+
 
 
 License
