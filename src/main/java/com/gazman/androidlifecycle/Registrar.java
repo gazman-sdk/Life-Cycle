@@ -84,6 +84,7 @@ public abstract class Registrar {
 
     /**
      * When classToInject will be injected, it will be constructed using this builder
+     *
      * @param classToInject
      * @param builder
      * @param <T>

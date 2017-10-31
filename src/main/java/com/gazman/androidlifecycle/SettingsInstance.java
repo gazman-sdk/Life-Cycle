@@ -15,7 +15,8 @@ import com.gazman.androidlifecycle.signal.SignalsHelper;
  * Created by Ilya Gazman on 5/23/2015.
  */
 public final class SettingsInstance {
-    SettingsInstance(){}
+    SettingsInstance() {
+    }
 
     private Registrar registrar = new Registrar() {
 
@@ -38,9 +39,10 @@ public final class SettingsInstance {
     /**
      * Since Logger is used in LifeCycle the only way to override it
      * in life cycle as well, is using this method
+     *
      * @param loggerClass the new logger to use
      */
-    public void setLogger(Class<? extends Logger> loggerClass){
+    public void setLogger(Class<? extends Logger> loggerClass) {
         registrar.registerClass(loggerClass);
     }
 }

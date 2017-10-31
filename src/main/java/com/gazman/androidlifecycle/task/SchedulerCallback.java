@@ -14,24 +14,21 @@ public class SchedulerCallback {
     private Logger logger = Logger.create("Scheduler");
     public Runnable callback;
 
-    public void init(int count){
+    public void init(int count) {
         this.count = new AtomicInteger(count);
     }
 
-    public InvocationHandler createHandler(){
-        return new InvocationHandler() {
-            @Override
-            public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
-                if (count.decrementAndGet() <= 0) {
-                    callback.run();
-                }
-                logger.d("Completed", method.getName(), count);
-                return null;
+    public InvocationHandler createHandler() {
+        return (proxy, method, args) -> {
+            if (count.decrementAndGet() <= 0) {
+                callback.run();
             }
+            logger.d("Completed", method.getName(), count);
+            return null;
         };
     }
 
-    public void addOne(){
+    public void addOne() {
         count.incrementAndGet();
     }
 }

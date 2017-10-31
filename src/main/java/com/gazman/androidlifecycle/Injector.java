@@ -9,9 +9,10 @@
 package com.gazman.androidlifecycle;
 
 public interface Injector {
-	/**
-	 * Will be called right after the constructor
-	 * @param family The family this instance been injected in to
-	 */
-	void injectionHandler(String family);
+    /**
+     * Will be called right after the constructor
+     *
+     * @param family The family this instance been injected in to
+     */
+    void injectionHandler(String family);
 }

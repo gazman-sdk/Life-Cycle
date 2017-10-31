@@ -8,4 +8,5 @@
 // =================================================================================================
 package com.gazman.androidlifecycle;
 
-public interface SingleTon {}
+public interface SingleTon {
+}

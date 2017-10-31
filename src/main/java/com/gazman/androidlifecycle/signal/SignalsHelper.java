@@ -34,8 +34,8 @@ public class SignalsHelper {
      *
      * @return if the registration made
      */
-    public boolean register(){
-        if(registered){
+    public boolean register() {
+        if (registered) {
             return false;
         }
         registered = true;
@@ -51,7 +51,7 @@ public class SignalsHelper {
      * Change the state to unregister and call to removeAll(), it does not removes the registerCallback
      * to removeIt call setRegisterCallback(null), how ever most of the time it's not really necessary...
      */
-    public void unregister(){
+    public void unregister() {
         registered = false;
     }
 
@@ -61,12 +61,7 @@ public class SignalsHelper {
      */
     public <T> void addListener(final Signal<T> signal, final T listener) {
         signal.addListener(listener);
-        removables.add(new Runnable() {
-            @Override
-            public void run() {
-                signal.removeListener(listener);
-            }
-        });
+        removables.add(() -> signal.removeListener(listener));
     }
 
     /**
@@ -78,12 +73,7 @@ public class SignalsHelper {
         } else {
             signal.addListener(listener);
         }
-        removables.add(new Runnable() {
-            @Override
-            public void run() {
-                signal.removeListener(listener);
-            }
-        });
+        removables.add(() -> signal.removeListener(listener));
     }
 
     /**
@@ -92,12 +82,7 @@ public class SignalsHelper {
     public <T> void addListener(Class<T> type, final T listener) {
         final Signal<T> signal = SignalsBag.inject(type);
         signal.addListener(listener);
-        removables.add(new Runnable() {
-            @Override
-            public void run() {
-                signal.removeListener(listener);
-            }
-        });
+        removables.add(() -> signal.removeListener(listener));
     }
 
     /**
@@ -110,12 +95,7 @@ public class SignalsHelper {
         } else {
             signal.addListener(listener);
         }
-        removables.add(new Runnable() {
-            @Override
-            public void run() {
-                signal.removeListener(listener);
-            }
-        });
+        removables.add(() -> signal.removeListener(listener));
     }
 
     /**
@@ -123,12 +103,7 @@ public class SignalsHelper {
      */
     public <T> void addListenerOnce(final Signal<T> signal, final T listener) {
         signal.addListenerOnce(listener);
-        removables.add(new Runnable() {
-            @Override
-            public void run() {
-                signal.removeListener(listener);
-            }
-        });
+        removables.add(() -> signal.removeListener(listener));
     }
 
     /**
@@ -136,12 +111,7 @@ public class SignalsHelper {
      */
     public <T> void addListenerOnce(final Signal<T> signal, final Class<T> listener) {
         signal.addListenerOnce(listener);
-        removables.add(new Runnable() {
-            @Override
-            public void run() {
-                signal.removeListener(listener);
-            }
-        });
+        removables.add(() -> signal.removeListener(listener));
     }
 
     /**
@@ -150,12 +120,7 @@ public class SignalsHelper {
     public <T> void addListenerOnce(Class<T> type, final T listener) {
         final Signal<T> signal = SignalsBag.inject(type);
         signal.addListenerOnce(listener);
-        removables.add(new Runnable() {
-            @Override
-            public void run() {
-                signal.removeListener(listener);
-            }
-        });
+        removables.add(() -> signal.removeListener(listener));
     }
 
     /**
@@ -164,12 +129,7 @@ public class SignalsHelper {
     public <T> void addListenerOnce(Class<T> type, final Class<? extends T> listener) {
         final Signal<T> signal = SignalsBag.inject(type);
         signal.addListenerOnce(listener);
-        removables.add(new Runnable() {
-            @Override
-            public void run() {
-                signal.removeListener(listener);
-            }
-        });
+        removables.add(() -> signal.removeListener(listener));
     }
 
     /**

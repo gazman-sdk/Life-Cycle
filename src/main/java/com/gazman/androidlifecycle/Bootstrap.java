@@ -9,7 +9,8 @@
 package com.gazman.androidlifecycle;
 
 import android.content.Context;
-import android.os.*;
+import android.os.Handler;
+import android.os.Looper;
 
 import com.gazman.androidlifecycle.signal.$SignalsTerminator;
 import com.gazman.androidlifecycle.signal.DisposableSignal;
@@ -19,7 +20,6 @@ import com.gazman.androidlifecycle.signals.BootstrapTimeSignal;
 import com.gazman.androidlifecycle.signals.PostBootstrapTime;
 import com.gazman.androidlifecycle.signals.RegistrationCompleteSignal;
 import com.gazman.androidlifecycle.task.Scheduler;
-import com.gazman.androidlifecycle.task.signals.TasksCompleteSignal;
 
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -57,12 +57,9 @@ public abstract class Bootstrap extends Registrar {
      * Start the initialization process
      */
     public void start() {
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                Looper.prepare();
-                initialize();
-            }
+        new Thread(() -> {
+            Looper.prepare();
+            initialize();
         }, "Registration Thread").start();
     }
 
@@ -70,16 +67,13 @@ public abstract class Bootstrap extends Registrar {
      * Start the initialization process
      */
     public void initializeOnly(final Runnable completeCallback) {
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                Looper.prepare();
-                synchronized (synObject) {
-                    if (!coreInitialization) {
-                        coreInitialize();
-                    }
-                    G.main.post(completeCallback);
+        new Thread(() -> {
+            Looper.prepare();
+            synchronized (synObject) {
+                if (!coreInitialization) {
+                    coreInitialize();
                 }
+                G.main.post(completeCallback);
             }
         }, "Registration Thread").start();
     }
@@ -97,12 +91,9 @@ public abstract class Bootstrap extends Registrar {
         bootstrapTimeSignal.onBootstrap(scheduler);
         postBootstrapTime.onPostBootstrapTime();
         scheduler.block();
-        handler.post(new Runnable() {
-            @Override
-            public void run() {
-                registrationCompleteSignal.registrationCompleteHandler();
-                bootstrapCompleted.set(true);
-            }
+        handler.post(() -> {
+            registrationCompleteSignal.registrationCompleteHandler();
+            bootstrapCompleted.set(true);
         });
     }
 
@@ -138,27 +129,24 @@ public abstract class Bootstrap extends Registrar {
     public static void exit(final Runnable callback) {
         Scheduler scheduler = new Scheduler();
         SignalsBag.inject(DisposableSignal.class).dispatcher.onDispose(scheduler);
-        scheduler.start(new TasksCompleteSignal() {
-            @Override
-            public void onTasksComplete() {
-                G.IO.removeCallbacksAndMessages(null);
-                G.main.removeCallbacksAndMessages(null);
-                synchronized (synObject) {
-                    Registrar.buildersMap.clear();
-                    Registrar.classesMap.clear();
-                    Registrar.registrars.clear();
-                }
-                $SignalsTerminator.exit();
-                ClassConstructor.singletons.clear();
-                registrationCompleted.set(false);
-                bootstrapCompleted.set(false);
+        scheduler.start(() -> {
+            G.IO.removeCallbacksAndMessages(null);
+            G.main.removeCallbacksAndMessages(null);
+            synchronized (synObject) {
+                Registrar.buildersMap.clear();
+                Registrar.classesMap.clear();
+                Registrar.registrars.clear();
+            }
+            $SignalsTerminator.exit();
+            ClassConstructor.singletons.clear();
+            registrationCompleted.set(false);
+            bootstrapCompleted.set(false);
 
-                if (callback != null) {
-                    callback.run();
-                }
-                if (killProcessOnExit) {
-                    android.os.Process.killProcess(android.os.Process.myPid());
-                }
+            if (callback != null) {
+                callback.run();
+            }
+            if (killProcessOnExit) {
+                android.os.Process.killProcess(android.os.Process.myPid());
             }
         });
     }

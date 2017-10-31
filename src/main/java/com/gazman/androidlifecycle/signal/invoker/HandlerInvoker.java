@@ -21,8 +21,8 @@ public class HandlerInvoker extends DefaultInvoker {
 
     @Override
     public void invoke(Method method, Object[] args, Object listener) {
-        if(runInstantlyIfOnHandlerThread){
-            if(Thread.currentThread() == handler.getLooper().getThread()){
+        if (runInstantlyIfOnHandlerThread) {
+            if (Thread.currentThread() == handler.getLooper().getThread()) {
                 super.invoke(method, args, listener);
                 return;
             }

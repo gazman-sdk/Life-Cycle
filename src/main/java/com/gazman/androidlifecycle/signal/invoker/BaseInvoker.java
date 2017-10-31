@@ -14,7 +14,8 @@ public class BaseInvoker implements Runnable {
     public Object[] args;
     public Object listener;
 
-    public BaseInvoker(){}
+    public BaseInvoker() {
+    }
 
     public BaseInvoker(Method method, Object[] args, Object listener) {
         this.method = method;
@@ -29,14 +30,15 @@ public class BaseInvoker implements Runnable {
         } catch (Throwable e) {
             if (UnhandledExceptionHandler.callback == null) {
                 Throwable cause = e.getCause();
-                if(cause == null){
+                if (cause == null) {
                     cause = e;
                 }
                 Log.e("LifeCycle", "Unhandled Exception, consider providing UnhandledExceptionHandler.callback", cause);
                 try {
                     Thread.sleep(10);
                     android.os.Process.killProcess(android.os.Process.myPid());
-                } catch (InterruptedException ignore) {}
+                } catch (InterruptedException ignore) {
+                }
             } else {
                 UnhandledExceptionHandler.callback.onApplicationError(e);
             }

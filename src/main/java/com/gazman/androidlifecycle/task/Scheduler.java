@@ -54,10 +54,9 @@ public class Scheduler {
      * @return this Scheduler
      */
     public Scheduler waitFor(Signal... signals) {
-        if(!started){
+        if (!started) {
             Collections.addAll(this.signals, signals);
-        }
-        else{
+        } else {
             ArrayList<Signal> list = new ArrayList<>();
             Collections.addAll(list, signals);
             Class<?>[] interfaces = buildCallBack(list);
@@ -210,15 +209,12 @@ public class Scheduler {
         this.schedulerCallback = new SchedulerCallback();
         SchedulerCallback schedulerCallback = this.schedulerCallback;
         schedulerCallback.init(signals.size());
-        schedulerCallback.callback = new Runnable() {
-            @Override
-            public void run() {
-                synchronized (blocker) {
-                    blocker.notifyAll();
-                }
-                if (tasksCompleteSignal != null) {
-                    tasksCompleteSignal.onTasksComplete();
-                }
+        schedulerCallback.callback = () -> {
+            synchronized (blocker) {
+                blocker.notifyAll();
+            }
+            if (tasksCompleteSignal != null) {
+                tasksCompleteSignal.onTasksComplete();
             }
         };
         for (Signal signal : signals) {
@@ -231,12 +227,7 @@ public class Scheduler {
 
     private void startTimeTask() {
         if (waitForMilliseconds > 0) {
-            handler.postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    SignalsBag.inject(TimeOutSignal.class).dispatcher.onTimeOut();
-                }
-            }, waitForMilliseconds);
+            handler.postDelayed(SignalsBag.inject(TimeOutSignal.class).dispatcher::onTimeOut, waitForMilliseconds);
         }
     }
 }

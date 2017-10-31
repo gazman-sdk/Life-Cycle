@@ -13,7 +13,7 @@ package com.gazman.androidlifecycle.signal;
  */
 public class $SignalsTerminator {
 
-    public static void exit(){
+    public static void exit() {
         SignalsBag.map.clear();
     }
 }

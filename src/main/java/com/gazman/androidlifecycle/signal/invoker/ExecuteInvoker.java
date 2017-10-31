@@ -15,7 +15,7 @@ public class ExecuteInvoker implements Invoker {
     }
 
     @Override
-    public void invoke(Method method, Object[] args, Object listener){
+    public void invoke(Method method, Object[] args, Object listener) {
         executor.execute(new BaseInvoker(method, args, listener));
     }
 }

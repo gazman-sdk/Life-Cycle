@@ -22,10 +22,12 @@ public final class SignalsBag {
 
     static HashMap<Class<?>, Signal> map = new HashMap<>();
 
-    private SignalsBag() {}
+    private SignalsBag() {
+    }
 
     /**
      * Will get you a signal from the given interface type, there will be only one instance of it in the system
+     *
      * @param type the signal type
      * @return Signal from given type
      */
@@ -41,6 +43,7 @@ public final class SignalsBag {
 
     /**
      * Create new signal from given type
+     *
      * @param type the interface type
      * @return Signal from given type
      */
@@ -49,7 +52,7 @@ public final class SignalsBag {
         return new Signal(type);
     }
 
-    public static <T> T log(Class<T> tClass, final String tag){
+    public static <T> T log(Class<T> tClass, final String tag) {
         //noinspection unchecked
         return (T) Proxy.newProxyInstance(tClass.getClassLoader(), new Class[]{tClass}, new InvocationHandler() {
 
@@ -58,7 +61,7 @@ public final class SignalsBag {
             @Override
             public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
                 StringBuilder stringBuilder = new StringBuilder();
-                if(args != null){
+                if (args != null) {
                     for (Object arg : args) {
                         stringBuilder.append(arg).append(" ");
                     }

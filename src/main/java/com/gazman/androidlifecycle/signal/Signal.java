@@ -41,12 +41,9 @@ public final class Signal<T> {
 
     Signal(Class<T> type) {
         originalType = type;
-        InvocationHandler invocationHandler = new InvocationHandler() {
-            @Override
-            public Object invoke(Object proxy, Method method, Object[] args) {
-                Signal.this.invoke(method, args);
-                return null;
-            }
+        InvocationHandler invocationHandler = (proxy, method, args) -> {
+            Signal.this.invoke(method, args);
+            return null;
         };
         //noinspection unchecked
         dispatcher = (T) Proxy.newProxyInstance(type.getClassLoader(), new Class[]{type}, invocationHandler);
@@ -54,6 +51,7 @@ public final class Signal<T> {
 
     /**
      * Register for this signal, until removeListener is called.
+     *
      * @param listener listener to register
      */
     public void addListener(T listener) {
@@ -63,6 +61,7 @@ public final class Signal<T> {
     /**
      * Register for this signal, until removeListener is called.
      * The listener will be injected each time before its been dispatched to.
+     *
      * @param listener the listener class to inject when dispatch is happening
      */
     public void addListener(Class<? extends T> listener) {
@@ -74,9 +73,10 @@ public final class Signal<T> {
      * after the first dispatch.
      * Note that it does not matter how many method this listener got in the interface,
      * it will unregister after the first one to be dispatched
+     *
      * @param listener listener to register
      */
-    public void addListenerOnce(T listener){
+    public void addListenerOnce(T listener) {
         applyListener(oneTimeListeners, listener);
     }
 
@@ -85,9 +85,10 @@ public final class Signal<T> {
      * after the first dispatch.
      * Note that it does not matter how many method this listener got in the interface,
      * it will unregister after the first one to be dispatched
+     *
      * @param listener the listener class to inject when dispatch is happening
      */
-    public void addListenerOnce(Class<? extends T> listener){
+    public void addListenerOnce(Class<? extends T> listener) {
         applyListener(oneTimeClassListeners, listener);
     }
 
@@ -102,13 +103,14 @@ public final class Signal<T> {
     }
 
     private void validateListener(Object listener) {
-        if(listener == null){
+        if (listener == null) {
             throw new NullPointerException("Listener can't be null");
         }
     }
 
     /**
      * Remove listener that been added thru addListener or addListenerOnce
+     *
      * @param listener listener to unregister
      */
     public void removeListener(T listener) {
@@ -123,6 +125,7 @@ public final class Signal<T> {
 
     /**
      * Remove listener that been added thru addListener or addListenerOnce
+     *
      * @param listener listener to unregister
      */
     public void removeListener(Class<? extends T> listener) {
@@ -144,19 +147,19 @@ public final class Signal<T> {
         Class<? extends T> classListener;
         T listener = null;
 
-        if(listeners.size() > 0){
+        if (listeners.size() > 0) {
             while (listeners.size() > 0) {
                 synchronized (synObject) {
-                    if(listeners.size() > 0) {
+                    if (listeners.size() > 0) {
                         listener = listeners.removeFirst();
                     }
                 }
-                if(listener != null) {
+                if (listener != null) {
                     listenersTMP.add(listener);
                     invoker.invoke(method, args, listener);
                 }
             }
-            synchronized (synObject){
+            synchronized (synObject) {
                 listeners.addAll(listenersTMP);
                 listenersTMP.clear();
             }
@@ -169,7 +172,7 @@ public final class Signal<T> {
             invoker.invoke(method, args, listener);
         }
 
-        if(classListeners.size() > 0){
+        if (classListeners.size() > 0) {
             while (classListeners.size() > 0) {
                 synchronized (synObject) {
                     classListener = classListeners.removeFirst();
@@ -178,7 +181,7 @@ public final class Signal<T> {
                 listener = Factory.inject(classListener);
                 invoker.invoke(method, args, listener);
             }
-            synchronized (synObject){
+            synchronized (synObject) {
                 classListeners.addAll(classListenersTMP);
                 classListenersTMP.clear();
             }
@@ -195,12 +198,11 @@ public final class Signal<T> {
     }
 
 
-
     public boolean hasListeners() {
         return hasListeners;
     }
 
-    private static class NoStackTraceRunTimeException extends RuntimeException{
+    private static class NoStackTraceRunTimeException extends RuntimeException {
         @Override
         public Throwable fillInStackTrace() {
             return this;

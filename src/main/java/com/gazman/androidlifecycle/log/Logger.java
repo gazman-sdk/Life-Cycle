@@ -255,10 +255,10 @@ public class Logger {
     }
 
     private static String extractObject(Object object) {
-        if(object == null){
+        if (object == null) {
             return "null";
         }
-        if(object.getClass().isArray()){
+        if (object.getClass().isArray()) {
             int length = Array.getLength(object);
             Object[] objects = new Object[length];
             //noinspection SuspiciousSystemArraycopy

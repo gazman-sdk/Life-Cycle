@@ -14,7 +14,7 @@ public class LogSettings {
     private boolean showPid;
     private int minTagLength;
 
-    public void init(){
+    public void init() {
         setEnabled(true);
         setPrefixDelimiter("|");
         setDelimiter(" ");
