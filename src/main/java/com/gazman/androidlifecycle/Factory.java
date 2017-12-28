@@ -39,6 +39,7 @@ public class Factory {
      */
     public static <T> T inject(Class<T> classType, String family) {
         HashMap<String, Class<?>> hashMap = Registrar.classesMap.get(classType);
+        @SuppressWarnings("unchecked")
         Class<? extends T> classToUse = hashMap != null ? (Class<? extends T>) hashMap.get(family) : classType;
         T instance;
         if (SingleTon.class.isAssignableFrom(classToUse)) {
@@ -82,6 +83,7 @@ public class Factory {
             family = Registrar.DEFAULT_FAMILY;
         }
         HashMap<String, Class<?>> hashMap = Registrar.classesMap.get(claz);
+        @SuppressWarnings("unchecked")
         Class<? extends T> classToUse = hashMap != null ? (Class<? extends T>) hashMap.get(family) : claz;
 
         T instance;
