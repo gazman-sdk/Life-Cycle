@@ -3,7 +3,6 @@ package com.gazman.androidlifecycle.task;
 import com.gazman.androidlifecycle.log.Logger;
 
 import java.lang.reflect.InvocationHandler;
-import java.lang.reflect.Method;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**

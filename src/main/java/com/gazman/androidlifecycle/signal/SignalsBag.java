@@ -35,7 +35,7 @@ public final class SignalsBag {
         @SuppressWarnings("unchecked")
         Signal<T> signal = map.get(type);
         if (signal == null) {
-            signal = new Signal<T>(type);
+            signal = new Signal<>(type);
             map.put(type, signal);
         }
         return signal;

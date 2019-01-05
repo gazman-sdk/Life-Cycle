@@ -21,7 +21,6 @@ import java.lang.reflect.Array;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.text.DecimalFormat;
-import java.util.Arrays;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
@@ -55,9 +54,9 @@ public class Logger {
     }
 
     public void setTag(String tag) {
-        String extra = "";
+        StringBuilder extra = new StringBuilder();
         for (int i = 0; i < localSettings.getMinTagLength() - tag.length(); i++) {
-            extra += "_";
+            extra.append("_");
         }
         this.tag = tag + extra;
     }
@@ -66,7 +65,7 @@ public class Logger {
         return localSettings;
     }
 
-    protected String getClassAndMethodNames(int dept) {
+    private String getClassAndMethodNames(int dept) {
         if (!localSettings.isPrintMethodName()) {
             return "";
         }

@@ -194,7 +194,7 @@ public class Scheduler {
             }
         }
 
-        return interfaces.toArray(new Class[interfaces.size()]);
+        return interfaces.toArray(new Class[0]);
     }
 
     private synchronized void start(Class<?>[] interfaces) {

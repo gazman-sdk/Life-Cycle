@@ -42,6 +42,9 @@ public class Factory {
         @SuppressWarnings("unchecked")
         Class<? extends T> classToUse = hashMap != null ? (Class<? extends T>) hashMap.get(family) : classType;
         T instance;
+        if(classToUse == null){
+            throw new NullPointerException("classType not found");
+        }
         if (SingleTon.class.isAssignableFrom(classToUse)) {
             instance = ClassConstructor.constructSingleTon(family, classToUse);
         } else {
@@ -87,6 +90,9 @@ public class Factory {
         Class<? extends T> classToUse = hashMap != null ? (Class<? extends T>) hashMap.get(family) : claz;
 
         T instance;
+        if(classToUse == null){
+            throw new NullPointerException("class not found");
+        }
         if (SingleTon.class.isAssignableFrom(classToUse)) {
             instance = ClassConstructor.constructSingleTon(family, classToUse, params);
         } else {
