@@ -59,7 +59,7 @@ public final class SignalsBag {
             private Logger logger = Logger.create(tag);
 
             @Override
-            public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
+            public Object invoke(Object proxy, Method method, Object[] args) {
                 StringBuilder stringBuilder = new StringBuilder();
                 if (args != null) {
                     for (Object arg : args) {

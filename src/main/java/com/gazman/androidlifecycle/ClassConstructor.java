@@ -19,7 +19,7 @@ class ClassConstructor {
     static HashMap<Class<?>, HashMap<String, Object>> singletons = new HashMap<>();
 
     @SuppressWarnings("unchecked")
-    public static <T> T constructSingleTon(String family, Class<?> classToUse, Object... params) {
+    public static synchronized <T> T constructSingleTon(String family, Class<?> classToUse, Object... params) {
         HashMap<String, Object> map = singletons.get(classToUse);
         if (map == null) {
             map = new HashMap<>();
