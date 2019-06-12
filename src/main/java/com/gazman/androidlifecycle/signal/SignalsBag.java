@@ -67,6 +67,30 @@ public final class SignalsBag {
                     }
                 }
                 logger.d(method.getName(), stringBuilder);
+                Class<?> returnType = method.getReturnType();
+                if (returnType.isPrimitive()){
+                    if(returnType.isAssignableFrom(boolean.class)){
+                        return false;
+                    }
+                    if(returnType.isAssignableFrom(int.class)){
+                        return 0;
+                    }
+                    if(returnType.isAssignableFrom(float.class)){
+                        return 0;
+                    }
+                    if(returnType.isAssignableFrom(long.class)){
+                        return 0;
+                    }
+                    if(returnType.isAssignableFrom(byte.class)){
+                        return 0;
+                    }
+                    if(returnType.isAssignableFrom(double.class)){
+                        return 0;
+                    }
+                    if(returnType.isAssignableFrom(short.class)){
+                        return 0;
+                    }
+                }
                 return null;
             }
         });
