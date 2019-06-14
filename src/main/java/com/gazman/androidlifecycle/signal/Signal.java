@@ -133,7 +133,6 @@ public final class Signal<T> {
         synchronized (synObject) {
             classListeners.remove(listener);
             classListenersTMP.remove(listener);
-            //noinspection SuspiciousMethodCalls
             oneTimeClassListeners.remove(listener);
             updateHasListeners();
         }

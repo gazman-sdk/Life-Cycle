@@ -22,11 +22,11 @@ import android.provider.Settings;
  */
 public class G extends ContextWrapper {
 
+    @SuppressLint("StaticFieldLeak")
     public static final Context app = new G();
     public static final Handler main = new Handler(Looper.getMainLooper());
     public static final Handler IO;
     public static final int version = Build.VERSION.SDK_INT;
-    private static String uuid;
 
     static {
         HandlerThread io = new HandlerThread("io");
