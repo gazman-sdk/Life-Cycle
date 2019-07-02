@@ -169,4 +169,8 @@ public class SignalsHelper {
         removables.clear();
     }
 
+    public boolean hasListeners(){
+        return !removables.isEmpty();
+    }
+
 }
