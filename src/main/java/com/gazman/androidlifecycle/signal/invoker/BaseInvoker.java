@@ -1,7 +1,5 @@
 package com.gazman.androidlifecycle.signal.invoker;
 
-import android.util.Log;
-
 import com.gazman.androidlifecycle.utils.UnhandledExceptionHandler;
 
 import java.lang.reflect.Method;
@@ -26,14 +24,14 @@ public class BaseInvoker implements Runnable {
     @Override
     public void run() {
         try {
+            if(!method.isAccessible()) {
+                method.setAccessible(true);
+            }
             method.invoke(listener, args);
         } catch (Throwable e) {
+            e.printStackTrace();
             if (UnhandledExceptionHandler.callback == null) {
-                Throwable cause = e.getCause();
-                if (cause == null) {
-                    cause = e;
-                }
-                Log.e("LifeCycle", "Unhandled Exception, consider providing UnhandledExceptionHandler.callback", cause);
+                System.err.println("Unhandled Exception, consider providing UnhandledExceptionHandler.callback");
                 try {
                     Thread.sleep(10);
                     android.os.Process.killProcess(android.os.Process.myPid());

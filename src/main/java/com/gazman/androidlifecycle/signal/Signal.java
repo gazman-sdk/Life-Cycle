@@ -15,7 +15,9 @@ import com.gazman.androidlifecycle.signal.invoker.Invoker;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
+import java.util.ArrayList;
 import java.util.LinkedList;
+import java.util.List;
 
 /**
  * Created by Ilya Gazman on 2/24/2015.
@@ -25,9 +27,8 @@ public final class Signal<T> {
     public final T dispatcher;
     public final Class<T> originalType;
     private final Object synObject = new Object();
-    private final LinkedList<T> listeners = new LinkedList<>();
-    private final LinkedList<T> listenersTMP = new LinkedList<>();
-    private final LinkedList<Class<? extends T>> classListeners = new LinkedList<>();
+    private final ArrayList<T> listeners = new ArrayList<>();
+    private final ArrayList<Class<? extends T>> classListeners = new ArrayList<>();
     private final LinkedList<Class<? extends T>> classListenersTMP = new LinkedList<>();
     private final LinkedList<T> oneTimeListeners = new LinkedList<>();
     private final LinkedList<Class<? extends T>> oneTimeClassListeners = new LinkedList<>();
@@ -92,7 +93,7 @@ public final class Signal<T> {
         applyListener(oneTimeClassListeners, listener);
     }
 
-    private <TYPE> void applyListener(LinkedList<TYPE> list, TYPE listener) {
+    private <TYPE> void applyListener(List<TYPE> list, TYPE listener) {
         validateListener(listener);
         synchronized (synObject) {
             if (!list.contains(listener)) {
@@ -109,7 +110,7 @@ public final class Signal<T> {
     }
 
     /**
-     * Remove listener that been added thru addListener or addListenerOnce
+     * Remove listener that been added through addListener or addListenerOnce
      *
      * @param listener listener to unregister
      */
@@ -117,7 +118,6 @@ public final class Signal<T> {
         validateListener(listener);
         synchronized (synObject) {
             listeners.remove(listener);
-            listenersTMP.remove(listener);
             oneTimeListeners.remove(listener);
             updateHasListeners();
         }
@@ -139,28 +139,27 @@ public final class Signal<T> {
     }
 
     private void updateHasListeners() {
-        hasListeners = 0 < classListeners.size() + oneTimeClassListeners.size() + listeners.size() + oneTimeListeners.size();
+        synchronized (synObject) {
+            hasListeners = 0 < classListeners.size() + oneTimeClassListeners.size() + listeners.size() + oneTimeListeners.size();
+        }
     }
 
     void invoke(Method method, Object[] args) {
         Class<? extends T> classListener;
-        T listener = null;
+        T listener;
 
         if (listeners.size() > 0) {
-            while (listeners.size() > 0) {
+            int i = 0;
+            while (true) {
                 synchronized (synObject) {
-                    if (listeners.size() > 0) {
-                        listener = listeners.removeFirst();
+                    if (i < listeners.size()) {
+                        listener = listeners.get(i);
+                    } else {
+                        break;
                     }
                 }
-                if (listener != null) {
-                    listenersTMP.add(listener);
-                    invoker.invoke(method, args, listener);
-                }
-            }
-            synchronized (synObject) {
-                listeners.addAll(listenersTMP);
-                listenersTMP.clear();
+                invoker.invoke(method, args, listener);
+                i++;
             }
         }
 
@@ -172,17 +171,18 @@ public final class Signal<T> {
         }
 
         if (classListeners.size() > 0) {
-            while (classListeners.size() > 0) {
+            int i = 0;
+            while (true) {
                 synchronized (synObject) {
-                    classListener = classListeners.removeFirst();
+                    if (i < classListeners.size()) {
+                        classListener = classListeners.get(i);
+                    } else {
+                        break;
+                    }
                 }
-                classListenersTMP.add(classListener);
                 listener = Factory.inject(classListener);
                 invoker.invoke(method, args, listener);
-            }
-            synchronized (synObject) {
-                classListeners.addAll(classListenersTMP);
-                classListenersTMP.clear();
+                i++;
             }
         }
 
