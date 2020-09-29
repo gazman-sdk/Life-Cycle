@@ -24,7 +24,7 @@ public class BaseInvoker implements Runnable {
     @Override
     public void run() {
         try {
-            if(!method.isAccessible()) {
+            if (!method.isAccessible()) {
                 method.setAccessible(true);
             }
             method.invoke(listener, args);

@@ -64,7 +64,7 @@ public abstract class Registrar {
      */
     protected <T, X extends T> void registerClass(Class<X> claz,
                                                   Class<T> topClaz, String family) {
-        if(claz == null){
+        if (claz == null) {
             throw new NullPointerException();
         }
         if (family == null) {
