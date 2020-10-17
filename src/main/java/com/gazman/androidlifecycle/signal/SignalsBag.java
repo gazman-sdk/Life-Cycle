@@ -56,7 +56,7 @@ public final class SignalsBag {
         //noinspection unchecked
         return (T) Proxy.newProxyInstance(tClass.getClassLoader(), new Class[]{tClass}, new InvocationHandler() {
 
-            private Logger logger = Logger.create(tag);
+            private final Logger logger = Logger.create(tag);
 
             @Override
             public Object invoke(Object proxy, Method method, Object[] args) {

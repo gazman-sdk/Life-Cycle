@@ -18,7 +18,7 @@ import java.util.ArrayList;
  */
 public class SignalsHelper {
 
-    private ArrayList<Runnable> removables = new ArrayList<>();
+    private final ArrayList<Runnable> removables = new ArrayList<>();
 
 
     private Runnable registerCallback;

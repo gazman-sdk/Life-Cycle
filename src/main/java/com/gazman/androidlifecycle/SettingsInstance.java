@@ -18,7 +18,7 @@ public final class SettingsInstance {
     SettingsInstance() {
     }
 
-    private Registrar registrar = new Registrar() {
+    private final Registrar registrar = new Registrar() {
 
         @Override
         protected void initClasses() {

@@ -10,7 +10,7 @@ import java.util.concurrent.atomic.AtomicInteger;
  */
 public class SchedulerCallback {
     private AtomicInteger count;
-    private Logger logger = Logger.create("Scheduler");
+    private final Logger logger = Logger.create("Scheduler");
     public Runnable callback;
 
     public void init(int count) {
