@@ -28,16 +28,16 @@ import java.util.concurrent.atomic.AtomicBoolean;
  */
 public abstract class Bootstrap extends Registrar {
 
-    private Handler handler = new Handler(Looper.getMainLooper());
+    private final Handler handler = new Handler(Looper.getMainLooper());
     private static final Object synObject = new Object();
-    private SignalsHelper signalsHelper = new SignalsHelper();
+    private final SignalsHelper signalsHelper = new SignalsHelper();
     private boolean coreInitialization;
-    private RegistrationCompleteSignal registrationCompleteSignal = SignalsBag.inject(RegistrationCompleteSignal.class).dispatcher;
-    private BootstrapTimeSignal bootstrapTimeSignal = SignalsBag.inject(BootstrapTimeSignal.class).dispatcher;
-    private PostBootstrapTime postBootstrapTime = SignalsBag.inject(PostBootstrapTime.class).dispatcher;
+    private final RegistrationCompleteSignal registrationCompleteSignal = SignalsBag.inject(RegistrationCompleteSignal.class).dispatcher;
+    private final BootstrapTimeSignal bootstrapTimeSignal = SignalsBag.inject(BootstrapTimeSignal.class).dispatcher;
+    private final PostBootstrapTime postBootstrapTime = SignalsBag.inject(PostBootstrapTime.class).dispatcher;
 
-    private static AtomicBoolean bootstrapCompleted = new AtomicBoolean(false);
-    private static AtomicBoolean registrationCompleted = new AtomicBoolean(false);
+    private static final AtomicBoolean bootstrapCompleted = new AtomicBoolean(false);
+    private static final AtomicBoolean registrationCompleted = new AtomicBoolean(false);
 
     protected static boolean killProcessOnExit = false;
 

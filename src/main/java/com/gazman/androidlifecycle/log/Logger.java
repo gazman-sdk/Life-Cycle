@@ -31,12 +31,12 @@ public class Logger {
 
     private static final AtomicInteger id = new AtomicInteger();
     private String tag;
-    private static long startingTime = System.currentTimeMillis();
+    private static final long startingTime = System.currentTimeMillis();
     //    private long lastCall = System.currentTimeMillis();
     private LogSettings localSettings;
-    private DecimalFormat timeFormat = new DecimalFormat("00.000");
-    private DecimalFormat idFormat = new DecimalFormat("00");
-    private String uniqueID = idFormat.format(id.incrementAndGet());
+    private final DecimalFormat timeFormat = new DecimalFormat("00.000");
+    private final DecimalFormat idFormat = new DecimalFormat("00");
+    private final String uniqueID = idFormat.format(id.incrementAndGet());
 
     /**
      * Creates logger using Factory and call the protected method init(tag);

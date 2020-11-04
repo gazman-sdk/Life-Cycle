@@ -27,12 +27,12 @@ import java.util.Collections;
 @SuppressWarnings("unused")
 public class Scheduler {
 
-    private Handler handler = new Handler(Looper.getMainLooper());
+    private final Handler handler = new Handler(Looper.getMainLooper());
     private final Object blocker = new Object();
-    private ArrayList<Signal> signals = new ArrayList<>();
+    private final ArrayList<Signal> signals = new ArrayList<>();
     private TasksCompleteSignal tasksCompleteSignal;
     private long waitForMilliseconds;
-    private Logger logger = Logger.create("Scheduler");
+    private final Logger logger = Logger.create("Scheduler");
     private boolean started;
     private SchedulerCallback schedulerCallback;
 
