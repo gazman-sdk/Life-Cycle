@@ -26,7 +26,6 @@ import java.util.concurrent.atomic.AtomicInteger;
 /**
  * Created by Ilya Gazman on 06-Dec-14.
  */
-@SuppressWarnings("unused")
 public class Logger {
 
     private static final AtomicInteger id = new AtomicInteger();

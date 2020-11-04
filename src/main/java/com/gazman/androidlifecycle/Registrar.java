@@ -14,7 +14,6 @@ import java.util.HashMap;
 import java.util.LinkedList;
 
 
-@SuppressWarnings("unused")
 public abstract class Registrar {
     static HashMap<Class<?>, HashMap<String, Class<?>>> classesMap = new HashMap<>();
     static HashMap<Class<?>, Builder> buildersMap = new HashMap<>();

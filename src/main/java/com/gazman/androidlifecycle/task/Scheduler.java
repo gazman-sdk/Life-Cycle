@@ -24,7 +24,6 @@ import java.util.Collections;
 /**
  * Created by Ilya Gazman on 3/4/2015.
  */
-@SuppressWarnings("unused")
 public class Scheduler {
 
     private final Handler handler = new Handler(Looper.getMainLooper());
