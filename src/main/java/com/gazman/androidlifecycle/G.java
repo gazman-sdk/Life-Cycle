@@ -13,9 +13,11 @@ import android.content.Context;
 import android.content.ContextWrapper;
 import android.os.Build;
 import android.os.Handler;
-import android.os.HandlerThread;
 import android.os.Looper;
 import android.provider.Settings;
+
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 /**
  * A ContextWrapper for application context
@@ -25,14 +27,15 @@ public class G extends ContextWrapper {
     @SuppressLint("StaticFieldLeak")
     public static final Context app = new G();
     public static final Handler main = new Handler(Looper.getMainLooper());
-    public static final Handler IO;
+    /**
+     * Single thread executor
+     */
+    public static final ExecutorService IO = Executors.newSingleThreadExecutor();
+    /**
+     * Cached Thread Pool
+     */
+    public static final ExecutorService CE = Executors.newCachedThreadPool();
     public static final int version = Build.VERSION.SDK_INT;
-
-    static {
-        HandlerThread io = new HandlerThread("io");
-        io.start();
-        IO = new Handler(io.getLooper());
-    }
 
     @SuppressLint("HardwareIds")
     public static String getDeviceUniqueIDForFraudUsage() {

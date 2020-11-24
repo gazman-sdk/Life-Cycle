@@ -130,7 +130,7 @@ public abstract class Bootstrap extends Registrar {
         Scheduler scheduler = new Scheduler();
         SignalsBag.inject(DisposableSignal.class).dispatcher.onDispose(scheduler);
         scheduler.start(() -> {
-            G.IO.removeCallbacksAndMessages(null);
+            G.IO.shutdown();
             G.main.removeCallbacksAndMessages(null);
             synchronized (synObject) {
                 Registrar.buildersMap.clear();
