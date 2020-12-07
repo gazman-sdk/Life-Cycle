@@ -16,4 +16,8 @@ android {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
     }
+
+    dependencies {
+        testImplementation group: 'junit', name: 'junit', version: '4.13.1'
+    }
 }
