@@ -10,11 +10,6 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 public class SignalTest {
 
-    private interface EatSignal {
-        void onEat();
-    }
-
-
     @Test
     public void testDispatch() {
         AtomicInteger foods = new AtomicInteger();
@@ -55,5 +50,9 @@ public class SignalTest {
         }
 
         Assert.assertEquals(200, foods.get());
+    }
+
+    private interface EatSignal {
+        void onEat();
     }
 }

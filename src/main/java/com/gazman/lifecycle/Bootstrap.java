@@ -20,18 +20,20 @@ import java.util.concurrent.atomic.AtomicBoolean;
  */
 public abstract class Bootstrap extends Registrar {
 
-    private final Handler handler = new Handler(Looper.getMainLooper());
     private static final Object synObject = new Object();
+    private static final AtomicBoolean bootstrapCompleted = new AtomicBoolean(false);
+    private static final AtomicBoolean registrationCompleted = new AtomicBoolean(false);
+    protected static boolean killProcessOnExit = false;
+    private final Handler handler = new Handler(Looper.getMainLooper());
     private final SignalsHelper signalsHelper = new SignalsHelper();
-    private boolean coreInitialization;
     private final RegistrationCompleteSignal registrationCompleteSignal = SignalsBag.inject(RegistrationCompleteSignal.class).dispatcher;
     private final BootstrapTimeSignal bootstrapTimeSignal = SignalsBag.inject(BootstrapTimeSignal.class).dispatcher;
     private final PostBootstrapTime postBootstrapTime = SignalsBag.inject(PostBootstrapTime.class).dispatcher;
+    private boolean coreInitialization;
 
-    private static final AtomicBoolean bootstrapCompleted = new AtomicBoolean(false);
-    private static final AtomicBoolean registrationCompleted = new AtomicBoolean(false);
-
-    protected static boolean killProcessOnExit = false;
+    public Bootstrap(Context context) {
+        G.init(context);
+    }
 
     public static boolean isBootstrapComplete() {
         return bootstrapCompleted.get();
@@ -41,8 +43,34 @@ public abstract class Bootstrap extends Registrar {
         return registrationCompleted.get();
     }
 
-    public Bootstrap(Context context) {
-        G.init(context);
+    /**
+     * Will dispatch DisposableSignal and then:<br>
+     * - Will unregister all the signals in the system<br>
+     * - Will remove all the singletons in the system, so GC will be able to destroy them
+     */
+    public static void exit(final Runnable callback) {
+        Scheduler scheduler = new Scheduler();
+        SignalsBag.inject(DisposableSignal.class).dispatcher.onDispose(scheduler);
+        scheduler.start(() -> {
+            G.IO.shutdown();
+            G.main.removeCallbacksAndMessages(null);
+            synchronized (synObject) {
+                Registrar.buildersMap.clear();
+                Registrar.classesMap.clear();
+                Registrar.registrars.clear();
+            }
+            $SignalsTerminator.exit();
+            ClassConstructor.singletons.clear();
+            registrationCompleted.set(false);
+            bootstrapCompleted.set(false);
+
+            if (callback != null) {
+                callback.run();
+            }
+            if (killProcessOnExit) {
+                android.os.Process.killProcess(android.os.Process.myPid());
+            }
+        });
     }
 
     /**
@@ -111,35 +139,5 @@ public abstract class Bootstrap extends Registrar {
         initSettings();
         registrationCompleted.set(true);
         registrars.clear();
-    }
-
-    /**
-     * Will dispatch DisposableSignal and then:<br>
-     * - Will unregister all the signals in the system<br>
-     * - Will remove all the singletons in the system, so GC will be able to destroy them
-     */
-    public static void exit(final Runnable callback) {
-        Scheduler scheduler = new Scheduler();
-        SignalsBag.inject(DisposableSignal.class).dispatcher.onDispose(scheduler);
-        scheduler.start(() -> {
-            G.IO.shutdown();
-            G.main.removeCallbacksAndMessages(null);
-            synchronized (synObject) {
-                Registrar.buildersMap.clear();
-                Registrar.classesMap.clear();
-                Registrar.registrars.clear();
-            }
-            $SignalsTerminator.exit();
-            ClassConstructor.singletons.clear();
-            registrationCompleted.set(false);
-            bootstrapCompleted.set(false);
-
-            if (callback != null) {
-                callback.run();
-            }
-            if (killProcessOnExit) {
-                android.os.Process.killProcess(android.os.Process.myPid());
-            }
-        });
     }
 }

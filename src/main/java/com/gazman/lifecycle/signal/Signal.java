@@ -16,6 +16,7 @@ import java.util.List;
  */
 public final class Signal<T> {
 
+    private static final Invoker DEFAULT_INVOKER = new DefaultInvoker();
     public final T dispatcher;
     public final Class<T> originalType;
     private final Object synObject = new Object();
@@ -25,12 +26,7 @@ public final class Signal<T> {
     private final LinkedList<T> oneTimeListeners = new LinkedList<>();
     private final LinkedList<Class<? extends T>> oneTimeClassListeners = new LinkedList<>();
     private boolean hasListeners;
-    private static final Invoker DEFAULT_INVOKER = new DefaultInvoker();
     private Invoker invoker = DEFAULT_INVOKER;
-
-    public void setInvoker(Invoker invoker) {
-        this.invoker = invoker;
-    }
 
     Signal(Class<T> type) {
         originalType = type;
@@ -40,6 +36,10 @@ public final class Signal<T> {
         };
         //noinspection unchecked
         dispatcher = (T) Proxy.newProxyInstance(type.getClassLoader(), new Class[]{type}, invocationHandler);
+    }
+
+    public void setInvoker(Invoker invoker) {
+        this.invoker = invoker;
     }
 
     /**

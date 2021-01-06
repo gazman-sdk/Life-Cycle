@@ -21,9 +21,9 @@ public class Scheduler {
     private final Handler handler = new Handler(Looper.getMainLooper());
     private final Object blocker = new Object();
     private final ArrayList<Signal> signals = new ArrayList<>();
+    private final Logger logger = Logger.create("Scheduler");
     private TasksCompleteSignal tasksCompleteSignal;
     private long waitForMilliseconds;
-    private final Logger logger = Logger.create("Scheduler");
     private boolean started;
     private SchedulerCallback schedulerCallback;
 

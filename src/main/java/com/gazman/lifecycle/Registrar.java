@@ -7,12 +7,11 @@ import java.util.LinkedList;
 
 
 public abstract class Registrar {
+    // GUIDE value
+    static final String DEFAULT_FAMILY = "de9502c7-a41a-4fdb-9d42-249b94fbeaa9";
     static HashMap<Class<?>, HashMap<String, Class<?>>> classesMap = new HashMap<>();
     @SuppressWarnings("rawtypes")
     static HashMap<Class<?>, Builder> buildersMap = new HashMap<>();
-    // GUIDE value
-    static final String DEFAULT_FAMILY = "de9502c7-a41a-4fdb-9d42-249b94fbeaa9";
-
     static LinkedList<Registrar> registrars = new LinkedList<>();
 
     /**
