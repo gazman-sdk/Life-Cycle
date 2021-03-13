@@ -4,10 +4,10 @@ import android.os.Handler;
 import android.os.Looper;
 
 import com.gazman.lifecycle.log.Logger;
-import com.gazman.lifecycle.signal.Signal;
-import com.gazman.lifecycle.signal.SignalsBag;
 import com.gazman.lifecycle.task.signals.TasksCompleteSignal;
 import com.gazman.lifecycle.task.signals.TimeOutSignal;
+import com.gazman.signals.Signal;
+import com.gazman.signals.Signals;
 
 import java.lang.reflect.Proxy;
 import java.util.ArrayList;
@@ -71,7 +71,7 @@ public class Scheduler {
      * @return The newly created signal
      */
     public <T> T create(Class<T> type) {
-        Signal<T> signal = SignalsBag.create(type);
+        Signal<T> signal = Signals.signal(type);
         waitFor(signal);
         return signal.dispatcher;
     }
@@ -84,7 +84,7 @@ public class Scheduler {
      * @return The newly injected signal
      */
     public <T> T inject(Class<T> type) {
-        Signal<T> signal = SignalsBag.inject(type);
+        Signal<T> signal = Signals.signal(type);
         waitFor(signal);
         return signal.dispatcher;
     }
@@ -97,7 +97,7 @@ public class Scheduler {
      */
     public Scheduler waitFor(Class... signals) {
         for (Class signalClass : signals) {
-            Signal signal = SignalsBag.inject(signalClass);
+            Signal signal = Signals.signal(signalClass);
             waitFor(signal);
         }
         return this;
@@ -111,7 +111,7 @@ public class Scheduler {
      * @return this Scheduler
      */
     public Scheduler waitFor(long milliseconds) {
-        waitFor(SignalsBag.inject(TimeOutSignal.class));
+        waitFor(Signals.signal(TimeOutSignal.class));
         waitForMilliseconds = milliseconds;
         return this;
     }
@@ -218,7 +218,7 @@ public class Scheduler {
 
     private void startTimeTask() {
         if (waitForMilliseconds > 0) {
-            handler.postDelayed(SignalsBag.inject(TimeOutSignal.class).dispatcher::onTimeOut, waitForMilliseconds);
+            handler.postDelayed(Signals.signal(TimeOutSignal.class).dispatcher::onTimeOut, waitForMilliseconds);
         }
     }
 }

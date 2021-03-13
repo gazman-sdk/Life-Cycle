@@ -2,52 +2,10 @@ Life Cycle is a light and powerful library to handle events and dependencies in 
 
 Signals
 -------
-Events in life cycle called signals. Let's see an example first.
+Signals was separated to its own repo now and is used as a dependency.
 
-```java
-public interface LoginSignal{
-    void onLogin(UserData userData);
-}
-
-public class LoginScreen{
-    
-    public void onCreate(){
-        Signal<LoginSignal> loginSignal = SignalsBag.inject(LoginSignal.class);
-        loginSignal.addListener(userData -> {
-            setUserName(userData.name);
-            setUserImage(userData.imageUrl);
-        });
-    }
-}
-
-public class LoginModel{
-    private final Signal<LoginSignal> loginSignal = SignalsBag.inject(LoginSignal.class);
-    
-    public void setUserData(UserData userData){
-        loginSignal.dispatcher.onLogin(userData);
-    }
-}
-```
-
-As you can see there is a full separation between the dispatcher, `LoginModel` and the listener `LoginScreen`.
-Here are a few more ways to use a Signal
-
-```java
-class LoginScreen{
-    public void init(){
-        
-        Signal<LoginSignal> loginSignal = SignalsBag.inject(LoginSignal.class);
-        loginSignal.addListenerOnce(userData -> {}); // The listener will be automatically removed after the first dispatch
-        loginSignal.addListener(LoginScreen.class); // LoginScreen will be injected(see below what injection is) each time 
-        //                                              to handle the this event
-        loginSignal.addListenerOnce(LoginScreen.class); // he listener will be automatically removed after the first dispatch
-        
-        // Unregister event
-        loginSignal.removeListener(LoginScreen.class);
-        loginSignal.removeListener(this); 
-    }
-}
-```
+Check out below for more details
+https://github.com/gazman-sdk/signals
 
 Singletons
 ------------

@@ -1,6 +1,6 @@
 package com.gazman.lifecycle;
 
-import com.gazman.lifecycle.signal.SignalsHelper;
+import com.gazman.signals.SignalsHelper;
 
 import java.util.HashMap;
 import java.util.LinkedList;
