@@ -9,9 +9,9 @@ import java.util.concurrent.atomic.AtomicInteger;
  * Created by Ilya Gazman on 6/16/2015.
  */
 public class SchedulerCallback {
-    private AtomicInteger count;
     private final Logger logger = Logger.create("Scheduler");
     public Runnable callback;
+    private AtomicInteger count;
 
     public void init(int count) {
         this.count = new AtomicInteger(count);

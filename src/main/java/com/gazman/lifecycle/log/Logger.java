@@ -21,13 +21,13 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class Logger {
 
     private static final AtomicInteger id = new AtomicInteger();
-    private String tag;
     private static final long startingTime = System.currentTimeMillis();
-    //    private long lastCall = System.currentTimeMillis();
-    private LogSettings localSettings;
     private final DecimalFormat timeFormat = new DecimalFormat("00.000");
     private final DecimalFormat idFormat = new DecimalFormat("00");
     private final String uniqueID = idFormat.format(id.incrementAndGet());
+    private String tag;
+    //    private long lastCall = System.currentTimeMillis();
+    private LogSettings localSettings;
 
     /**
      * Creates logger using Factory and call the protected method init(tag);
@@ -36,6 +36,37 @@ public class Logger {
         Logger logger = Factory.inject(Logger.class);
         logger.init(tag);
         return logger;
+    }
+
+    public static String join(String delimiter, Object... parameters) {
+        return join(parameters, delimiter);
+    }
+
+    public static String join(Object[] parameters, String delimiter) {
+        StringBuilder stringBuilder = new StringBuilder();
+        for (Object object : parameters) {
+            String objectString = extractObject(object);
+            stringBuilder.append(objectString);
+            if (objectString.length() > 0) {
+                stringBuilder.append(delimiter);
+            }
+        }
+
+        return stringBuilder.toString();
+    }
+
+    private static String extractObject(Object object) {
+        if (object == null) {
+            return "null";
+        }
+        if (object.getClass().isArray()) {
+            int length = Array.getLength(object);
+            Object[] objects = new Object[length];
+            //noinspection SuspiciousSystemArraycopy
+            System.arraycopy(object, 0, objects, 0, length);
+            return "[" + join(objects, ",") + "]";
+        }
+        return object.toString();
     }
 
     protected void init(String tag) {
@@ -225,37 +256,6 @@ public class Logger {
         } else {
             method.invoke(null, tag, message);
         }
-    }
-
-    public static String join(String delimiter, Object... parameters) {
-        return join(parameters, delimiter);
-    }
-
-    public static String join(Object[] parameters, String delimiter) {
-        StringBuilder stringBuilder = new StringBuilder();
-        for (Object object : parameters) {
-            String objectString = extractObject(object);
-            stringBuilder.append(objectString);
-            if (objectString.length() > 0) {
-                stringBuilder.append(delimiter);
-            }
-        }
-
-        return stringBuilder.toString();
-    }
-
-    private static String extractObject(Object object) {
-        if (object == null) {
-            return "null";
-        }
-        if (object.getClass().isArray()) {
-            int length = Array.getLength(object);
-            Object[] objects = new Object[length];
-            //noinspection SuspiciousSystemArraycopy
-            System.arraycopy(object, 0, objects, 0, length);
-            return "[" + join(objects, ",") + "]";
-        }
-        return object.toString();
     }
 
     public String getTimePrefix() {

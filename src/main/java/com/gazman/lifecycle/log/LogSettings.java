@@ -26,12 +26,12 @@ public class LogSettings {
         setMinTagLength(18);
     }
 
-    public void setDelimiter(String delimiter) {
-        this.delimiter = delimiter;
-    }
-
     public String getDelimiter() {
         return delimiter;
+    }
+
+    public void setDelimiter(String delimiter) {
+        this.delimiter = delimiter;
     }
 
     public boolean isPrintTime() {

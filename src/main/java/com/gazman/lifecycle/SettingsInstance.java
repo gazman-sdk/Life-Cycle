@@ -7,9 +7,6 @@ import com.gazman.lifecycle.signal.SignalsHelper;
  * Created by Ilya Gazman on 5/23/2015.
  */
 public final class SettingsInstance {
-    SettingsInstance() {
-    }
-
     private final Registrar registrar = new Registrar() {
 
         @Override
@@ -27,6 +24,9 @@ public final class SettingsInstance {
 
         }
     };
+
+    SettingsInstance() {
+    }
 
     /**
      * Since Logger is used in LifeCycle the only way to override it

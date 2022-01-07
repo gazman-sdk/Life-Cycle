@@ -28,6 +28,11 @@ public class G extends ContextWrapper {
      */
     public static final ExecutorService CE = Executors.newCachedThreadPool();
     public static final int version = Build.VERSION.SDK_INT;
+    private static boolean initialized = false;
+
+    private G() {
+        super(null);
+    }
 
     @SuppressLint("HardwareIds")
     public static String getDeviceUniqueIDForFraudUsage() {
@@ -42,8 +47,12 @@ public class G extends ContextWrapper {
         return "https://market.android.com/details?id=" + G.app.getPackageName();
     }
 
-    private G() {
-        super(null);
+    public static void init(Context context) {
+        if (initialized) {
+            return;
+        }
+        initialized = true;
+        ((G) app).attachBaseContext(context.getApplicationContext());
     }
 
     @Override
@@ -52,15 +61,5 @@ public class G extends ContextWrapper {
             return null;
         }
         return super.getSystemService(name);
-    }
-
-    private static boolean initialized = false;
-
-    public static void init(Context context) {
-        if (initialized) {
-            return;
-        }
-        initialized = true;
-        ((G) app).attachBaseContext(context.getApplicationContext());
     }
 }
