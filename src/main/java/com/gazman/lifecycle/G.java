@@ -19,56 +19,48 @@ public class G extends ContextWrapper {
     @SuppressLint("StaticFieldLeak")
     public static final Context app = new G();
     public static final Handler main = new Handler(Looper.getMainLooper());
-    public static ErrorLogger errorLogger;
-
-    public interface ErrorLogger{
-        void onError(Exception e);
-    }
-
     /**
      * Single thread executor
      */
     public static final ExecutorService IO = Executors.newSingleThreadExecutor();
+    public static final int version = Build.VERSION.SDK_INT;
     /**
      * Cached Thread Pool
      */
     private static final ExecutorService CE = Executors.newCachedThreadPool();
+    public static ErrorLogger errorLogger;
+    private static boolean initialized = false;
 
-    public static void execute(Runnable runnable){
+    private G() {
+        super(null);
+    }
+
+    public static void execute(Runnable runnable) {
         CE.execute(runnable);
     }
 
     public static void executeOnCESafely(Runnable runnable) {
         CE.execute(() -> {
-            try{
+            try {
                 runnable.run();
-            }
-            catch (Exception e){
-                if(errorLogger != null){
+            } catch (Exception e) {
+                if (errorLogger != null) {
                     errorLogger.onError(e);
                 }
             }
         });
     }
 
-    public static void executeOnMainSafely(Runnable runnable){
+    public static void executeOnMainSafely(Runnable runnable) {
         main.post(() -> {
-            try{
+            try {
                 runnable.run();
-            }
-            catch (Exception e){
-                if(errorLogger != null){
+            } catch (Exception e) {
+                if (errorLogger != null) {
                     errorLogger.onError(e);
                 }
             }
         });
-    }
-
-    public static final int version = Build.VERSION.SDK_INT;
-    private static boolean initialized = false;
-
-    private G() {
-        super(null);
     }
 
     @SuppressLint("HardwareIds")
@@ -98,5 +90,9 @@ public class G extends ContextWrapper {
             return null;
         }
         return super.getSystemService(name);
+    }
+
+    public interface ErrorLogger {
+        void onError(Exception e);
     }
 }
