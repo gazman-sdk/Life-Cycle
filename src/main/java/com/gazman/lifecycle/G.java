@@ -19,6 +19,12 @@ public class G extends ContextWrapper {
     @SuppressLint("StaticFieldLeak")
     public static final Context app = new G();
     public static final Handler main = new Handler(Looper.getMainLooper());
+    public static ErrorLogger errorLogger;
+
+    public interface ErrorLogger{
+        void onError(Exception e);
+    }
+
     /**
      * Single thread executor
      */
@@ -26,7 +32,38 @@ public class G extends ContextWrapper {
     /**
      * Cached Thread Pool
      */
-    public static final ExecutorService CE = Executors.newCachedThreadPool();
+    private static final ExecutorService CE = Executors.newCachedThreadPool();
+
+    public static void execute(Runnable runnable){
+        CE.execute(runnable);
+    }
+
+    public static void executeOnCESafely(Runnable runnable) {
+        CE.execute(() -> {
+            try{
+                runnable.run();
+            }
+            catch (Exception e){
+                if(errorLogger != null){
+                    errorLogger.onError(e);
+                }
+            }
+        });
+    }
+
+    public static void executeOnMainSafely(Runnable runnable){
+        main.post(() -> {
+            try{
+                runnable.run();
+            }
+            catch (Exception e){
+                if(errorLogger != null){
+                    errorLogger.onError(e);
+                }
+            }
+        });
+    }
+
     public static final int version = Build.VERSION.SDK_INT;
     private static boolean initialized = false;
 
