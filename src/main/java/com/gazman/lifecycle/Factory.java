@@ -1,6 +1,7 @@
 package com.gazman.lifecycle;
 
 import java.util.HashMap;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * Inline tool for injecting classes.<br>
@@ -16,6 +17,7 @@ public class Factory {
      * @param classType the class to retrieve
      * @return instance of classType class
      */
+    @NotNull
     public static <T> T inject(Class<T> classType) {
         return inject(classType, Registrar.DEFAULT_FAMILY);
     }
