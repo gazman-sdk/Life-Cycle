@@ -2,13 +2,11 @@ package com.gazman.lifecycle.task;
 
 import android.os.Handler;
 import android.os.Looper;
-
 import com.gazman.lifecycle.log.Logger;
 import com.gazman.lifecycle.signal.Signal;
 import com.gazman.lifecycle.signal.SignalsBag;
 import com.gazman.lifecycle.task.signals.TasksCompleteSignal;
 import com.gazman.lifecycle.task.signals.TimeOutSignal;
-
 import java.lang.reflect.Proxy;
 import java.util.ArrayList;
 import java.util.Collections;

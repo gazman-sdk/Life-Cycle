@@ -5,10 +5,8 @@ import android.content.Context;
 import android.os.Process;
 import android.util.Log;
 import android.widget.Toast;
-
 import com.gazman.lifecycle.Factory;
 import com.gazman.lifecycle.G;
-
 import java.lang.reflect.Array;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;

@@ -1,7 +1,6 @@
 package com.gazman.lifecycle;
 
 import com.gazman.lifecycle.utils.UnhandledExceptionHandler;
-
 import java.lang.reflect.Constructor;
 import java.util.HashMap;
 

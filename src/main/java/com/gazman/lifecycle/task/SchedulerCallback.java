@@ -1,7 +1,6 @@
 package com.gazman.lifecycle.task;
 
 import com.gazman.lifecycle.log.Logger;
-
 import java.lang.reflect.InvocationHandler;
 import java.util.concurrent.atomic.AtomicInteger;
 

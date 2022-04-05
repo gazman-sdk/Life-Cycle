@@ -3,7 +3,6 @@ package com.gazman.lifecycle;
 import android.content.Context;
 import android.os.Handler;
 import android.os.Looper;
-
 import com.gazman.lifecycle.signal.$SignalsTerminator;
 import com.gazman.lifecycle.signal.DisposableSignal;
 import com.gazman.lifecycle.signal.SignalsBag;
@@ -12,7 +11,6 @@ import com.gazman.lifecycle.signals.BootstrapTimeSignal;
 import com.gazman.lifecycle.signals.PostBootstrapTime;
 import com.gazman.lifecycle.signals.RegistrationCompleteSignal;
 import com.gazman.lifecycle.task.Scheduler;
-
 import java.util.concurrent.atomic.AtomicBoolean;
 
 /**

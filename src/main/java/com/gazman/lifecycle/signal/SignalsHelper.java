@@ -2,7 +2,6 @@ package com.gazman.lifecycle.signal;
 
 import com.gazman.lifecycle.Factory;
 import com.gazman.lifecycle.SingleTon;
-
 import java.util.ArrayList;
 
 /**

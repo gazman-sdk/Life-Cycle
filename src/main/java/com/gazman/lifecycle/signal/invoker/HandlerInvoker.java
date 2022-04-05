@@ -1,7 +1,6 @@
 package com.gazman.lifecycle.signal.invoker;
 
 import android.os.Handler;
-
 import java.lang.reflect.Method;
 
 /**

@@ -1,7 +1,6 @@
 package com.gazman.lifecycle.signal;
 
 import com.gazman.lifecycle.log.Logger;
-
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;

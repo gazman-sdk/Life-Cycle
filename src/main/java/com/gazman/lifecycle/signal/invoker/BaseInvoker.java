@@ -1,7 +1,6 @@
 package com.gazman.lifecycle.signal.invoker;
 
 import com.gazman.lifecycle.utils.UnhandledExceptionHandler;
-
 import java.lang.reflect.Method;
 
 /**
