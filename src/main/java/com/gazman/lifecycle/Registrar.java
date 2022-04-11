@@ -8,10 +8,10 @@ import java.util.LinkedList;
 public abstract class Registrar {
     // GUIDE value
     static final String DEFAULT_FAMILY = "de9502c7-a41a-4fdb-9d42-249b94fbeaa9";
-    static HashMap<Class<?>, HashMap<String, Class<?>>> classesMap = new HashMap<>();
+    static final HashMap<Class<?>, HashMap<String, Class<?>>> classesMap = new HashMap<>();
     @SuppressWarnings("rawtypes")
-    static HashMap<Class<?>, Builder> buildersMap = new HashMap<>();
-    static LinkedList<Registrar> registrars = new LinkedList<>();
+    static final HashMap<Class<?>, Builder> buildersMap = new HashMap<>();
+    static final LinkedList<Registrar> registrars = new LinkedList<>();
 
     /**
      * Will call {@link #registerClass(Class, Class, String)} with <br>
@@ -61,7 +61,6 @@ public abstract class Registrar {
         Class<? super T> superclass = (Class<? super T>) claz;
         while (superclass != topClaz && superclass != null) {
             HashMap<String, Class<?>> hashMap = classesMap.get(superclass);
-            //noinspection Java8MapApi
             if (hashMap == null) {
                 hashMap = new HashMap<>();
                 classesMap.put(superclass, hashMap);

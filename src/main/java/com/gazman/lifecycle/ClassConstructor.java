@@ -7,12 +7,11 @@ import java.util.HashMap;
 class ClassConstructor {
 
     private static final Object[] NO_PARAMS = new Object[0];
-    static HashMap<Class<?>, HashMap<String, Object>> singletons = new HashMap<>();
+    static final HashMap<Class<?>, HashMap<String, Object>> singletons = new HashMap<>();
 
     @SuppressWarnings("unchecked")
     public static synchronized <T> T constructSingleTon(String family, Class<?> classToUse, Object... params) {
         HashMap<String, Object> map = singletons.get(classToUse);
-        //noinspection Java8MapApi
         if (map == null) {
             map = new HashMap<>();
             singletons.put(classToUse, map);
