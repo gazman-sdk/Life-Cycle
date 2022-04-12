@@ -6,8 +6,8 @@ import java.util.HashMap;
 
 class ClassConstructor {
 
-    private static final Object[] NO_PARAMS = new Object[0];
     static final HashMap<Class<?>, HashMap<String, Object>> singletons = new HashMap<>();
+    private static final Object[] NO_PARAMS = new Object[0];
 
     @SuppressWarnings("unchecked")
     public static synchronized <T> T constructSingleTon(String family, Class<?> classToUse, Object... params) {

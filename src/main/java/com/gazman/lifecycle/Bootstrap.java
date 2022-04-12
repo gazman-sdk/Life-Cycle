@@ -18,10 +18,10 @@ import java.util.concurrent.atomic.AtomicBoolean;
  */
 public abstract class Bootstrap extends Registrar {
 
+    protected static final boolean killProcessOnExit = false;
     private static final Object synObject = new Object();
     private static final AtomicBoolean bootstrapCompleted = new AtomicBoolean(false);
     private static final AtomicBoolean registrationCompleted = new AtomicBoolean(false);
-    protected static final boolean killProcessOnExit = false;
     private final Handler handler = new Handler(Looper.getMainLooper());
     private final SignalsHelper signalsHelper = new SignalsHelper();
     private final RegistrationCompleteSignal registrationCompleteSignal = SignalsBag.inject(RegistrationCompleteSignal.class).dispatcher;
