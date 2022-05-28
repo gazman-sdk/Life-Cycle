@@ -1,10 +1,10 @@
 apply plugin: 'com.android.library'
 
 android {
-    compileSdkVersion 31
+    compileSdkVersion 32
     defaultConfig {
         minSdkVersion 15
-        targetSdkVersion 31
+        targetSdkVersion 32
     }
     buildTypes {
         release {
@@ -21,4 +21,5 @@ android {
         implementation 'org.jetbrains:annotations:22.0.0'
         testImplementation group: 'junit', name: 'junit', version: '4.13.2'
     }
+    namespace 'com.gazman.lifecycle'
 }
