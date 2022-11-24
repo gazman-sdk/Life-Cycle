@@ -1,10 +1,17 @@
 apply plugin: 'com.android.library'
 
 android {
+<<<<<<< Updated upstream
     compileSdkVersion 30
     defaultConfig {
         minSdkVersion 16
         targetSdkVersion 30
+=======
+    compileSdkVersion 33
+    defaultConfig {
+        minSdkVersion 15
+        targetSdkVersion 33
+>>>>>>> Stashed changes
     }
     buildTypes {
         release {
