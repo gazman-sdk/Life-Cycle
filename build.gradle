@@ -3,7 +3,7 @@ apply plugin: 'com.android.library'
 android {
     compileSdkVersion 33
     defaultConfig {
-        minSdkVersion 15
+        minSdkVersion 19
         targetSdkVersion 33
     }
     buildTypes {
@@ -13,11 +13,12 @@ android {
         }
     }
     compileOptions {
-        sourceCompatibility 11
-        targetCompatibility 11
+        sourceCompatibility 17
+        targetCompatibility 17
     }
 
     dependencies {
         testImplementation group: 'junit', name: 'junit', version: '4.13.2'
     }
+    namespace 'com.gazman.lifecycle'
 }
