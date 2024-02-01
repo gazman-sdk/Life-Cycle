@@ -2,12 +2,8 @@ Life Cycle is a light and powerful library to handle events and dependencies in 
 
 Signals
 -------
-Signals was separated to its own repo now and is used as a dependency.
+Events in life cycle called signals. Let's see an example first.
 
-<<<<<<< HEAD
-Check out below for more details
-https://github.com/gazman-sdk/signals
-=======
 ```java
 public interface LoginSignal{
     void onLogin(UserData userData);
@@ -52,7 +48,6 @@ class LoginScreen{
     }
 }
 ```
->>>>>>> tmp
 
 Singletons
 ------------

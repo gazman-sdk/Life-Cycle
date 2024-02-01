@@ -41,9 +41,6 @@ class ClassConstructor {
                 return builder.build(classToUse, NO_PARAMS);
             }
 
-            if (classToUse.isInterface()) {
-                throwError(null, classToUse + " is not mapped");
-            }
             Constructor<T> constructor = classToUse.getDeclaredConstructor();
             if (!constructor.isAccessible()) {
                 constructor.setAccessible(true);
@@ -54,21 +51,13 @@ class ClassConstructor {
 
             return constructor.newInstance();
         } catch (Throwable throwable) {
-            throwError(throwable, "Injection failed");
-        }
-        return null;
-    }
-
-    private static void throwError(Throwable throwable, String message) {
-        if (UnhandledExceptionHandler.callback != null) {
-            UnhandledExceptionHandler.callback.onApplicationError(throwable);
-        } else {
-            if (throwable != null) {
-                throw new Error(message, throwable);
+            if (UnhandledExceptionHandler.callback != null) {
+                UnhandledExceptionHandler.callback.onApplicationError(throwable);
             } else {
-                throw new Error(message);
+                throw new Error("Injection failed", throwable);
             }
         }
+        return null;
     }
 
     @SuppressWarnings("unchecked")
@@ -102,7 +91,11 @@ class ClassConstructor {
 
             }
         } catch (Throwable throwable) {
-            throwError(throwable, "Injection failed");
+            if (UnhandledExceptionHandler.callback != null) {
+                UnhandledExceptionHandler.callback.onApplicationError(throwable);
+            } else {
+                throw new Error("Injection failed", throwable);
+            }
         }
         Error error = new Error("Constructor not found");
         if (UnhandledExceptionHandler.callback != null) {

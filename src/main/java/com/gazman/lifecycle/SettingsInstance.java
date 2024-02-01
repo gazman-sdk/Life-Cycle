@@ -1,7 +1,7 @@
 package com.gazman.lifecycle;
 
 import com.gazman.lifecycle.log.Logger;
-import com.gazman.signals.SignalsHelper;
+import com.gazman.lifecycle.signal.SignalsHelper;
 
 /**
  * Created by Ilya Gazman on 5/23/2015.

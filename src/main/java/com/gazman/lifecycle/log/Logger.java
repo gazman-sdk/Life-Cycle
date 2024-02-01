@@ -7,7 +7,7 @@ import android.util.Log;
 import android.widget.Toast;
 
 import com.gazman.lifecycle.Factory;
-import com.gazman.signals.context.G;
+import com.gazman.lifecycle.G;
 
 import java.lang.reflect.Array;
 import java.lang.reflect.InvocationTargetException;
