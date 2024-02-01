@@ -1,6 +1,9 @@
-apply plugin: 'com.android.library'
+plugins {
+    id 'com.android.library'
+}
 
 android {
+<<<<<<< HEAD
 <<<<<<< Updated upstream
     compileSdkVersion 30
     defaultConfig {
@@ -12,6 +15,12 @@ android {
         minSdkVersion 15
         targetSdkVersion 33
 >>>>>>> Stashed changes
+=======
+    compileSdk 34
+    defaultConfig {
+        minSdkVersion 19
+        targetSdkVersion 34
+>>>>>>> tmp
     }
     buildTypes {
         release {
@@ -20,11 +29,16 @@ android {
         }
     }
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_8
-        targetCompatibility JavaVersion.VERSION_1_8
+        sourceCompatibility 17
+        targetCompatibility 17
     }
 
     dependencies {
+<<<<<<< HEAD
         implementation 'com.github.gazman-sdk:signals:2.1'
+=======
+        testImplementation group: 'junit', name: 'junit', version: '4.13.2'
+>>>>>>> tmp
     }
+    namespace 'com.gazman.lifecycle'
 }

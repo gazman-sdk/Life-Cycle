@@ -21,12 +21,26 @@ public abstract class Bootstrap extends Registrar {
     private static final Object synObject = new Object();
     private static final AtomicBoolean bootstrapCompleted = new AtomicBoolean(false);
     private static final AtomicBoolean registrationCompleted = new AtomicBoolean(false);
+<<<<<<< HEAD
     private final Handler handler = new Handler(Looper.getMainLooper());
     private final SignalsHelper signalsHelper = new SignalsHelper();
     private final RegistrationCompleteSignal registrationCompleteSignal = Signals.signal(RegistrationCompleteSignal.class).dispatcher;
     private final BootstrapTimeSignal bootstrapTimeSignal = Signals.signal(BootstrapTimeSignal.class).dispatcher;
     private final PostBootstrapTime postBootstrapTime = Signals.signal(PostBootstrapTime.class).dispatcher;
     private boolean coreInitialization;
+=======
+    protected static boolean killProcessOnExit = false;
+    private final Handler handler = new Handler(Looper.getMainLooper());
+    private final SignalsHelper signalsHelper = new SignalsHelper();
+    private final RegistrationCompleteSignal registrationCompleteSignal = SignalsBag.inject(RegistrationCompleteSignal.class).dispatcher;
+    private final BootstrapTimeSignal bootstrapTimeSignal = SignalsBag.inject(BootstrapTimeSignal.class).dispatcher;
+    private final PostBootstrapTime postBootstrapTime = SignalsBag.inject(PostBootstrapTime.class).dispatcher;
+    private boolean coreInitialization;
+
+    public Bootstrap(Context context) {
+        G.init(context);
+    }
+>>>>>>> tmp
 
     public static boolean isBootstrapComplete() {
         return bootstrapCompleted.get();
@@ -36,6 +50,38 @@ public abstract class Bootstrap extends Registrar {
         return registrationCompleted.get();
     }
 
+<<<<<<< HEAD
+=======
+    /**
+     * Will dispatch DisposableSignal and then:<br>
+     * - Will unregister all the signals in the system<br>
+     * - Will remove all the singletons in the system, so GC will be able to destroy them
+     */
+    public static void exit(final Runnable callback) {
+        Scheduler scheduler = new Scheduler();
+        SignalsBag.inject(DisposableSignal.class).dispatcher.onDispose(scheduler);
+        scheduler.start(() -> {
+            G.IO.shutdown();
+            G.main.removeCallbacksAndMessages(null);
+            synchronized (synObject) {
+                Registrar.buildersMap.clear();
+                Registrar.classesMap.clear();
+                Registrar.registrars.clear();
+            }
+            $SignalsTerminator.exit();
+            ClassConstructor.singletons.clear();
+            registrationCompleted.set(false);
+            bootstrapCompleted.set(false);
+
+            if (callback != null) {
+                callback.run();
+            }
+            if (killProcessOnExit) {
+                android.os.Process.killProcess(android.os.Process.myPid());
+            }
+        });
+    }
+>>>>>>> tmp
 
     /**
      * Start the initialization process
